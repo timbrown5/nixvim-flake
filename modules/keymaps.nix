@@ -15,9 +15,36 @@
     vim.keymap.set('v', '<leader>d', '"_d', { desc = "Delete selection without copying" })
     
     -- Snacks mappings
-    vim.keymap.set('n', '<leader>e', '<cmd>Snacks explorer<CR>', { desc = "Toggle Explorer" })
+    vim.keymap.set('n', '\\', '<cmd>Snacks explorer<CR>', { desc = "Toggle Explorer" })
     vim.keymap.set('n', '<leader>ff', '<cmd>Snacks pick_files<CR>', { desc = "Find Files" })
     vim.keymap.set('n', '<leader>fg', '<cmd>Snacks live_grep<CR>', { desc = "Live Grep" })
+    
+    -- Configure which-key with updated spec format
+    require("which-key").setup({
+      icons = {
+        breadcrumb = "»", 
+        separator = "➜", 
+        group = "+", 
+      },
+      window = {
+        border = "single",
+        position = "bottom",
+      },
+      ignore_missing = true, -- Prevents warnings about missing mappings
+    })
+    
+    -- Register which-key groups using the LATEST spec format
+    local wk = require("which-key")
+    
+    -- Define the prefix groups with the updated format
+    wk.register({
+      ["<leader>"] = {
+        f = { name = "+find" },
+        D = { name = "+debug" },
+        l = { name = "+lsp" },
+        -- Removed the check group since we're not using multiple check shortcuts
+      }
+    })
   '';
   
   # DAP keymaps with standard keymaps approach
@@ -55,11 +82,19 @@
       action = "require('dapui').toggle";
       options.desc = "Toggle DAP UI";
     }
+    
+    # Just keep the main health check keymap
+    {
+      mode = "n";
+      key = "<leader>h";
+      action = ":checkhealth nixvim<CR>";
+      options.desc = "Check NixVim health";
+    }
   ];
   
-  # Which-key registrations
-  plugins.which-key.registrations = {
-    "<leader>e" = { name = "+explorer"; };
-    "<leader>f" = { name = "+find"; };
+  # Which-key plugin with minimal configuration
+  plugins.which-key = {
+    enable = true;
+    # Configuration moved to extraConfigLua
   };
 }

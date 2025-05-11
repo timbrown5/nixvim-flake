@@ -62,6 +62,39 @@ Add to your `configuration.nix` or `home.nix`:
 }
 ```
 
+## Optional Dependencies
+
+This configuration includes optional dependencies that enhance functionality:
+
+### Installation with Optional Dependencies
+
+You can enable all optional dependencies with a single flag:
+
+```nix
+# In your flake.nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixvim-config.url = "github:timbrown5/nixvim-flake";
+  };
+  
+  outputs = { self, nixpkgs, nixvim-config, ... }: {
+    # Enable all optional dependencies
+    nixosConfigurations.your-hostname = {
+      environment.systemPackages = [ 
+        nixvim-config.packages.${system}.mkNvimWithTheme {
+          enableOptionalDeps = true;  # Enable all optional dependencies
+        }
+      ];
+    };
+    
+    # Or use the pre-configured full version with all dependencies
+    homeConfigurations.your-username = {
+      home.packages = [ nixvim-config.packages.${system}.nvimFull ];
+    };
+  };
+}
+
 ## Core Plugins
 
 - **Snacks.nvim**: File explorer and picker

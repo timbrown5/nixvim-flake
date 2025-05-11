@@ -37,20 +37,22 @@ in {
   
   # Colorscheme configuration based on theme
   config = {
-    # Catppuccin theme configuration
+    # Catppuccin theme configuration with updated settings path
     colorschemes.catppuccin = lib.mkIf isCatppuccin {
       enable = true;
-      flavour = if themeVariant != null then themeVariant else defaultFlavor;
-      integrations = {
-        cmp = true;
-        gitsigns = true;
-        treesitter = true;
-        dap = {
-          enable = true;
-          enableUI = true;
+      settings = {
+        flavour = if themeVariant != null then themeVariant else defaultFlavor;
+        integrations = {
+          cmp = true;
+          gitsigns = true;
+          treesitter = true;
+          dap = {
+            enable = true;
+            enableUI = true;
+          };
+          native_lsp.enabled = true;
+          indent_blankline.enabled = true;
         };
-        native_lsp.enabled = true;
-        indent_blankline.enabled = true;
       };
     };
     

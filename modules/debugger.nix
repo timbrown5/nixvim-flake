@@ -7,27 +7,13 @@
   # Debug setup with latest API
   plugins.dap = {
     enable = true;
-    
-    adapters = {
-      python = {
-        type = "executable";
-        command = "python";
-        args = ["-m" "debugpy.adapter"];
-      };
-      
-      cppdbg = {
-        type = "executable";
-        command = "${pkgs.vscode-extensions.ms-vscode.cpptools}/share/vscode/extensions/ms-vscode.cpptools/debugAdapters/bin/OpenDebugAD7";
-        name = "cppdbg";
-      };
-    };
   };
   
-  # DAP UI and extensions with latest API
-  plugins.dap.extensions = {
-    dap-python.enable = true;
-    dap-ui = {
-      enable = true;
+  # DAP UI and extensions with updated API paths
+  plugins.dap-python.enable = true;
+  plugins.dap-ui = {
+    enable = true;
+    settings = {
       controls = {
         enabled = true;
         element = "repl";
@@ -38,36 +24,61 @@
         };
       };
     };
-    dap-virtual-text.enable = true;
   };
+  plugins.dap-virtual-text.enable = true;
   
   # Set up debug configurations in Lua to avoid escaping issues
   extraConfigLua = ''
+    -- Set up adapters in Lua
+    local dap = require('dap')
+    
+    -- Python adapter
+    dap.adapters.python = {
+      type = 'executable',
+      command = 'python',
+      args = {'-m', 'debugpy.adapter'}
+    }
+    
+    -- Use LLDB adapter instead of cppdbg
+    dap.adapters.lldb = {
+      type = 'executable',
+      command = '${pkgs.lldb}/bin/lldb-vscode', 
+      name = 'lldb'
+    }
+    
     -- Python configurations
-    require('dap').configurations.python = {
+    dap.configurations.python = {
       {
         type = 'python',
         request = 'launch',
         name = 'Launch file',
-        program = ''${file},
+        program = vim.fn.expand('%:p'),  -- Full path to current file
         pythonPath = 'python',
       }
     }
     
-    -- C/C++ configurations
-    require('dap').configurations.cpp = {
+    -- C/C++ configurations using LLDB
+    dap.configurations.cpp = {
       {
         name = "Launch",
-        type = "cppdbg",
+        type = "lldb",
         request = "launch",
-        program = ''${workspaceFolder}/build/''${fileBasenameNoExtension},
+        program = function()
+          return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/build/', 'file')
+        end,
+        cwd = vim.fn.getcwd(),  -- Current working directory
+        stopOnEntry = false,
         args = {},
-        stopAtEntry = true,
-        cwd = ''${workspaceFolder},
-        MIMode = "gdb",
-        miDebuggerPath = "${pkgs.gdb}/bin/gdb",
+        runInTerminal = false,
       }
     }
-    require('dap').configurations.c = require('dap').configurations.cpp
+    dap.configurations.c = dap.configurations.cpp
   '';
+  
+  # Add development tools to system packages
+  extraPackages = [
+    pkgs.lldb
+    pkgs.gcc
+    pkgs.gnumake
+  ];
 }

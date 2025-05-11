@@ -4,80 +4,50 @@
   lib,
   ...
 }: {
-  # LSP Configuration
+  # Minimal LSP Configuration
   plugins.lsp = {
     enable = true;
     
-    # LSP servers with latest format
+    # Only enable essential LSP servers
     servers = {
+      # Python tools
       pyright.enable = true;
-      ruff_lsp = {
+      ruff = {
         enable = true;
         package = lib.mkForce null;  # Let the user install ruff externally
-        settings = {
-          organizeImports = true;
-          fixAll = true;
-        };
       };
       
+      # Minimal Lua settings
       lua_ls = {
         enable = true;
-        settings = {
-          Lua = {
-            runtime.version = "LuaJIT";
-            diagnostics.globals = [ "vim" "require" "pcall" "pairs" ];
-            workspace = {
-              library = lib.mkForce [];
-              checkThirdParty = false;
-            };
-            telemetry.enable = false;
-            format.enable = true;
-          };
+        settings.Lua = {
+          diagnostics.globals = [ "vim" ];
+          telemetry.enable = false;
         };
       };
       
-      nil_ls = {
-        enable = true;
-        settings = {
-          formatting.command = [ "nixpkgs-fmt" ];
-          diagnostics.ignored = [ "unused_binding" "unused_with" ];
-          nix = {
-            maxMemoryMB = 2048;
-            flake.autoEvalInputs = true;
-          };
-        };
-      };
+      # Nix support
+      nil_ls.enable = true;
       
+      # C/C++
       clangd.enable = true;
-      terraformls.enable = true;
-      tflint.enable = true;
     };
     
+    # Use keymaps here, not in extraConfigLua - REMOVE DUPLICATES
     keymaps = {
       lspBuf = {
+        # These are only defined here, not in extraConfigLua
         "gd" = "definition";
         "gr" = "references";
         "K" = "hover";
-        "<leader>rn" = "rename";
-        "<leader>ca" = "code_action";
-        "<leader>f" = "format";
+        "<leader>lr" = "rename";
+        "<leader>la" = "code_action";
+        "<leader>lf" = "format";
       };
     };
-
-    onAttach = ''
-      -- Set up Lua LSP runtime paths
-      if client.name == "lua_ls" then
-        client.server_capabilities.documentFormattingProvider = true
-        client.config.settings = vim.tbl_deep_extend("force", client.config.settings or {}, {
-          Lua = {
-            workspace = { library = vim.api.nvim_get_runtime_file("", true) }
-          }
-        })
-      end
-    '';
   };
   
-  # Completion with nvim-cmp
+  # Simplified completion
   plugins.cmp = {
     enable = true;
     
@@ -85,24 +55,8 @@
       mapping = {
         "<C-Space>" = "cmp.mapping.complete()";
         "<CR>" = "cmp.mapping.confirm({ select = true })";
-        "<Tab>" = ''
-          function(fallback)
-            if cmp.visible() then
-              cmp.select_next_item()
-            else
-              fallback()
-            end
-          end
-        '';
-        "<S-Tab>" = ''
-          function(fallback)
-            if cmp.visible() then
-              cmp.select_prev_item()
-            else
-              fallback()
-            end
-          end
-        '';
+        "<Tab>" = "cmp.mapping.select_next_item()";
+        "<S-Tab>" = "cmp.mapping.select_prev_item()";
       };
       
       sources = [
@@ -113,68 +67,35 @@
       ];
       
       snippet.expand = "function(args) require('luasnip').lsp_expand(args.body) end";
-      
-      window = {
-        completion = { 
-          border = "rounded";
-          winhighlight = "Normal:Normal,FloatBorder:BorderBG,CursorLine:PmenuSel,Search:None";
-        };
-        documentation = {
-          border = "rounded";
-          winhighlight = "Normal:Normal,FloatBorder:BorderBG,CursorLine:PmenuSel,Search:None";
-        };
-      };
-      
-      formatting = {
-        fields = ["kind" "abbr" "menu"];
-        format = ''
-          function(entry, vim_item)
-            local kind_icons = {
-              Text = "󰉿", Method = "󰆧", Function = "󰊕", Constructor = "",
-              Field = "󰜢", Variable = "󰀫", Class = "󰠱", Interface = "",
-              Module = "", Property = "󰜢", Unit = "󰑭", Value = "󰎠",
-              Enum = "", Keyword = "󰌋", Snippet = "", Color = "󰏘",
-              File = "󰈙", Reference = "󰈇", Folder = "󰉋", EnumMember = "",
-              Constant = "󰏿", Struct = "󰙅", Event = "", Operator = "󰆕",
-              TypeParameter = "󰊄",
-            }
-            
-            vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
-            vim_item.menu = ({
-              nvim_lsp = "[LSP]", luasnip = "[Snip]", buffer = "[Buf]", path = "[Path]"
-            })[entry.source.name]
-            
-            return vim_item
-          end
-        '';
-      };
-      
-      experimental.ghost_text = true;
     };
   };
   
-  # Required plugins
+  # Only include essential plugins
   extraPlugins = with pkgs.vimPlugins; [
     cmp-nvim-lsp
     cmp-buffer
     cmp-path
     luasnip
-    friendly-snippets
   ];
   
-  # Ruff installation instruction in Lua
+  # Add minimal Lua for setting up LSP keybinding descriptions
   extraConfigLua = ''
-    -- Install Ruff if not available
-    vim.api.nvim_create_autocmd("BufEnter", {
-      pattern = "*.py",
-      callback = function()
-        -- Check if ruff is installed
-        local is_ruff_installed = vim.fn.executable('ruff') == 1
-        if not is_ruff_installed then
-          vim.notify("Ruff is not installed. Please install it with: pip install ruff", vim.log.levels.WARN)
-        end
+    -- Use autocmd to describe LSP keybindings to which-key when LSP attaches
+    vim.api.nvim_create_autocmd("LspAttach", {
+      callback = function(args)
+        local bufnr = args.buf
+        
+        -- Register LSP keybindings with which-key using the latest format
+        local wk = require("which-key")
+        
+        -- Buffer-local LSP mappings using latest which-key format
+        wk.register({
+          g = {
+            d = { vim.lsp.buf.definition, "Go to definition" },
+            r = { vim.lsp.buf.references, "References" },
+          }
+        }, { buffer = bufnr })
       end,
-      once = true,
     })
   '';
 }

@@ -25,7 +25,9 @@
         mkNvimWithTheme = {
           theme ? defaultTheme, 
           extraPlugins ? [],
-          overlay ? (final: prev: {})
+          overlay ? (final: prev: {}),
+          # Single flag for all optional dependencies
+          enableOptionalDeps ? false
         }:
           let
             # Apply custom overlay to packages
@@ -33,6 +35,28 @@
               inherit system;
               overlays = [ overlay ];
             };
+            
+            # Build the package list based on enableOptionalDeps flag
+            optionalPackages = with pkgs; [
+              # Always include these
+              gcc
+              gnumake
+            ] 
+            # Add all optional packages if enableOptionalDeps is true
+            ++ lib.optionals enableOptionalDeps [
+              # Search tools
+              ripgrep
+              fd
+              
+              # Language tools
+              terraform
+              
+              # Image and document processing
+              imagemagick
+              ghostscript
+              tectonic
+              mermaid-cli
+            ];
           in
           nixvim'.makeNixvimWithModule {
             inherit pkgs;
@@ -46,41 +70,53 @@
                 ./modules/debugger.nix
                 ./modules/filetype-config.nix
                 ./modules/ruff-config.nix
+                ./modules/health.nix
               ];
               
               # Pass theme and custom pkgs to modules
               config = {
                 _custom = {
-                  inherit theme;
+                  inherit theme enableOptionalDeps;
                   customPkgs = customPkgs;
                 };
                 
                 # Add any extra plugins
                 extraPlugins = extraPlugins;
+                
+                # Use the conditionally built package list
+                extraPackages = optionalPackages;
               };
             };
           };
         
         # Build the default configuration
-        nvim = mkNvimWithTheme { theme = defaultTheme; };
+        nvim = mkNvimWithTheme { 
+          theme = defaultTheme; 
+          # Default to false for optional dependencies
+          enableOptionalDeps = false;
+        };
         
-        # Function to create a custom package with a custom theme plugin
-        mkNvimWithCustomTheme = { 
-          themeName, 
-          themePlugin,
-          overlay ? (final: prev: {})
-        }:
-          mkNvimWithTheme {
-            theme = themeName;
-            extraPlugins = [ themePlugin ];
-            inherit overlay;
-          };
+        # Add a variant with all optional dependencies enabled
+        nvimFull = mkNvimWithTheme {
+          theme = defaultTheme;
+          enableOptionalDeps = true;
+        };
       in {
         packages = {
           default = nvim;
+          full = nvimFull;
           
           # Function to create a custom theme package
-          mkCustomTheme = mkNvimWithCustomTheme;
+          mkCustomTheme = { 
+            themeName, 
+            themePlugin,
+            overlay ? (final: prev: {})
+          }:
+            mkNvimWithTheme {
+              theme = themeName;
+              extraPlugins = [ themePlugin ];
+              inherit overlay;
+            };
         };
         
         # Fix for devShell using flake-parts
