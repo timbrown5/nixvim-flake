@@ -3,20 +3,24 @@
   pkgs,
   lib,
   ...
-}:
-{
+}: {
   # Add health check configuration under config
   config = {
     extraConfigLua = ''
       -- Create a custom health module for the NixVim configuration
       _G.nixvim_health = {}
-
+      
       -- Health check implementation
       _G.nixvim_health.check = function()
-        -- ... existing health check code ...
+        local health = require('vim.health')
+        local start = health.start
+        local ok = health.ok
+        local warn = health.warn
+        local error = health.error
+        local info = health.info
         
         -- Check if optional dependencies are enabled in config
-        local optional_deps_enabled = ${if config._custom.enableOptionalDeps then "true" else "false"}
+        local optional_deps_enabled = ${if config.nixvim-config.enableOptionalDeps then "true" else "false"}
         
         -- Check search tools
         start("Checking search tools")
@@ -97,8 +101,6 @@
             info("  Without Mermaid CLI, diagrams cannot be rendered")
           end
         end
-        
-        -- ... rest of health check code ...
       end
     '';
 

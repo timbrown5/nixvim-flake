@@ -3,99 +3,70 @@
   pkgs,
   lib,
   ...
-}:
-{
-  # Core keybindings
-  globals.mapleader = " ";
-
-  # Custom keymaps in Lua
-  extraConfigLua = ''
-    -- Smart delete without copying
-    vim.keymap.set('n', '<leader>d', function() return smart_delete() end, { expr = true, desc = "Delete without copying" })
-    vim.keymap.set('n', '<leader>dd', function() smart_delete('line') end, { desc = "Delete line without copying" })
-    vim.keymap.set('v', '<leader>d', '"_d', { desc = "Delete selection without copying" })
-
-    -- Snacks mappings
-    vim.keymap.set('n', '\\', '<cmd>Snacks explorer<CR>', { desc = "Toggle Explorer" })
-    vim.keymap.set('n', '<leader>ff', '<cmd>Snacks pick_files<CR>', { desc = "Find Files" })
-    vim.keymap.set('n', '<leader>fg', '<cmd>Snacks live_grep<CR>', { desc = "Live Grep" })
-
-    -- Configure which-key with updated spec format
-    require("which-key").setup({
-      icons = {
-        breadcrumb = "»", 
-        separator = "➜", 
-        group = "+", 
-      },
-      window = {
-        border = "single",
-        position = "bottom",
-      },
-      ignore_missing = true, -- Prevents warnings about missing mappings
-    })
-
-    -- Register which-key groups using the LATEST spec format
-    local wk = require("which-key")
-
-    -- Define the prefix groups with the updated format
-    wk.register({
-      ["<leader>"] = {
-        f = { name = "+find" },
-        D = { name = "+debug" },
-        l = { name = "+lsp" },
-        -- Removed the check group since we're not using multiple check shortcuts
+}: {
+  config = {
+    # Configure ruff for Python with error handling
+    extraConfigLua = ''
+      -- Set up default config file for ruff
+      local ruff_config = {
+        line_length = 88,
+        select = { "E", "F", "I", "B" },  -- Core rules
+        ignore = { "E501" },              -- Handled by formatter
+        fix = true,
+        format_code = true,
       }
-    })
-  '';
 
-  # DAP keymaps with standard keymaps approach
-  keymaps = [
-    # Register mappings
-    {
-      mode = "n";
-      key = "<leader>p";
-      action = "\"0p";
-      options.desc = "Paste from yank register (0)";
-    }
+      -- Write ruff config to disk when editing Python files
+      local function setup_ruff_config()
+        local ok, error = pcall(function()
+          local config_path = vim.fn.getcwd() .. "/.ruff.toml"
+          
+          -- Only create the config if it doesn't exist
+          if vim.fn.filereadable(config_path) == 0 then
+            local config_lines = {}
+            
+            -- Convert the Lua table to TOML format
+            table.insert(config_lines, "# Ruff configuration")
+            table.insert(config_lines, "line-length = " .. ruff_config.line_length)
+            
+            -- Add select rules
+            table.insert(config_lines, "[lint]")
+            table.insert(config_lines, "select = [")
+            for _, rule in ipairs(ruff_config.select) do
+              table.insert(config_lines, '  "' .. rule .. '",')
+            end
+            table.insert(config_lines, "]")
+            
+            -- Add ignore rules
+            table.insert(config_lines, "ignore = [")
+            for _, rule in ipairs(ruff_config.ignore) do
+              table.insert(config_lines, '  "' .. rule .. '",')
+            end
+            table.insert(config_lines, "]")
+                    
+            -- Add format settings
+            table.insert(config_lines, "[format]")
+            table.insert(config_lines, 'quote-style = "double"')
+            table.insert(config_lines, 'indent-style = "space"')
+            
+            -- Write the config to disk
+            vim.fn.writefile(config_lines, config_path)
+          end
+        end)
+        
+        if not ok then
+          vim.notify("Failed to create ruff config: " .. tostring(error), vim.log.levels.ERROR)
+        end
+      end
 
-    # DAP mappings
-    {
-      mode = "n";
-      key = "<leader>Db";
-      action = "require('dap').toggle_breakpoint";
-      options.desc = "Toggle breakpoint";
-    }
-    {
-      mode = "n";
-      key = "<leader>Dc";
-      action = "require('dap').continue";
-      options.desc = "Start/Continue debugging";
-    }
-    {
-      mode = "n";
-      key = "<leader>Dj";
-      action = "require('dap').step_over";
-      options.desc = "Step over";
-    }
-    {
-      mode = "n";
-      key = "<leader>Du";
-      action = "require('dapui').toggle";
-      options.desc = "Toggle DAP UI";
-    }
-
-    # Just keep the main health check keymap
-    {
-      mode = "n";
-      key = "<leader>h";
-      action = ":checkhealth nixvim<CR>";
-      options.desc = "Check NixVim health";
-    }
-  ];
-
-  # Which-key plugin with minimal configuration
-  plugins.which-key = {
-    enable = true;
-    # Configuration moved to extraConfigLua
+      -- Set up autocmd to create ruff config in Python projects
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "python",
+        callback = function()
+          setup_ruff_config()
+        end,
+        once = true,
+      })
+    '';
   };
 }
