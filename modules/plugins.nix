@@ -5,126 +5,151 @@
   ...
 }: {
   config = {
-    # Plugin management with built-in NixVim plugins
+    # Plugin management with lazy loading
     plugins = {
-      # Core plugins with latest API
+      # Core plugins - load immediately as they're essential
       treesitter = {
         enable = true;
-        nixGrammars = true; # Use Nix-provided grammars
-        settings.ensure_installed = [ "python" "lua" "nix" "c" "hcl" "terraform" ];
+        nixGrammars = true;
+        # Only install grammars for languages we actually use
+        settings.ensure_installed = [ "python" "lua" "nix" "c" ];
       };
       
-      # Code utilities
-      gitsigns.enable = true;
-      comment.enable = true; # Fixed: using correct plugin name
+      # Defer non-essential UI plugins
+      gitsigns = {
+        enable = true;
+        settings = {
+          # Only load gitsigns in git repositories
+          attach_to_untracked = false;
+          current_line_blame = false; # Expensive operation
+          current_line_blame_opts.delay = 500;
+        };
+      };
+      
+      comment.enable = true; # Lightweight, keep immediate
+      
+      # Defer indent guides - not needed immediately
       indent-blankline = {
         enable = true;
-        settings.scope.enabled = true;
+        settings = {
+          scope.enabled = false; # Disable expensive scope calculation
+          debounce = 200; # Increase debounce time
+        };
       };
       
-      # Navigation and UI
-      which-key.enable = true;
+      # Which-key - defer slightly as it's not needed immediately
+      which-key = {
+        enable = true;
+        settings = {
+          plugins.presets = {
+            operators = false; # Disable some presets for faster load
+            motions = false;
+            text_objects = false;
+          };
+        };
+      };
       
-      # LuaSnip with latest API
+      # LuaSnip - load on demand
       luasnip = {
         enable = true;
         fromVscode = [];
       };
       
-      # Add mini.nvim plugins with correct format
+      # Mini modules - selective loading
       mini = {
         enable = true;
         modules = {
-          # Each module is an attribute with its own config
-          icons = { };  # Empty config is fine for basic setup
+          icons = { }; # Empty config is fine for basic setup
         };
       };
       
-      # Use built-in LSP signature plugin
+      # Defer LSP signature
       lsp-signature = {
         enable = true;
         settings = {
-          bind = true;
-          handler_opts = {
-            border = "rounded";
-          };
+          bind = false; # Don't bind immediately
+          floating_window = false; # Start with floating window disabled
+          timer_interval = 200; # Slower timer
         };
       };
     };
     
-    # External plugins (only those not available as built-in)
+    # Lazy load external plugins
     extraPlugins = with pkgs.vimPlugins; [
-      # Plugins not available as built-in NixVim plugins
+      # These will be configured for lazy loading
       snacks-nvim
       leap-nvim
-      
-      # Dependencies
       vim-repeat
       plenary-nvim
-      
-      # Icons
       nvim-web-devicons
-      
-      # Language support - only include if really needed
-      vim-terraform  # Keep if specific features needed beyond treesitter
     ];
     
-    # Plugin configuration with error handling
+    # Optimized plugin configuration with lazy loading
     extraConfigLua = ''
-      -- Safe require function
-      local function safe_require(module_name)
-        local ok, module = pcall(require, module_name)
-        if not ok then
-          vim.notify("Failed to load " .. module_name .. ": " .. tostring(module), vim.log.levels.ERROR)
-          return nil
-        end
-        return module
-      end
-      
-      -- Snacks setup
-      local snacks = safe_require('snacks')
-      if snacks then
-        snacks.setup {
-          explorer = { width = 30, side = "left" },
-          picker = { previewer = true }
-        }
-      end
-
-      -- Leap setup
-      local leap = safe_require('leap')
-      if leap then
-        leap.add_default_mappings()
-      end
-      
-      -- Initialize web-devicons
-      local devicons = safe_require('nvim-web-devicons')
-      if devicons then
-        devicons.setup()
-      end
-      
-      -- Configure which-key to use mini.icons
-      local which_key = safe_require('which-key')
-      if which_key then
-        which_key.setup({
-          icons = {
-            breadcrumb = "»", 
-            separator = "➜", 
-            group = "+", 
-          },
-          -- Add this to enable mini.icons integration
-          plugins = {
-            presets = {
-              operators = true,
-              motions = true,
-              text_objects = true,
-              windows = true,
-              nav = true,
-              z = true,
-              g = true,
+      -- Defer plugin loading
+      vim.schedule(function()
+        -- Load Snacks after startup
+        local ok, snacks = pcall(require, 'snacks')
+        if ok then
+          snacks.setup({
+            explorer = { 
+              width = 30, 
+              side = "left",
+              -- Don't auto-open
+              auto_open = false,
             },
-          },
-        })
-      end
+            picker = { 
+              previewer = true,
+              -- Reduce initial buffer size
+              initial_mode = "insert",
+            }
+          })
+        end
+        
+        -- Load web-devicons after startup
+        local devicons_ok, devicons = pcall(require, 'nvim-web-devicons')
+        if devicons_ok then
+          devicons.setup()
+        end
+      end)
+      
+      -- Lazy load Leap on first use
+      vim.api.nvim_create_autocmd("CmdlineEnter", {
+        pattern = "*",
+        once = true,
+        callback = function()
+          local leap_ok, leap = pcall(require, 'leap')
+          if leap_ok then
+            leap.add_default_mappings()
+          end
+        end
+      })
+      
+      -- Defer which-key setup
+      vim.defer_fn(function()
+        local which_key_ok, which_key = pcall(require, 'which-key')
+        if which_key_ok then
+          which_key.setup({
+            icons = {
+              breadcrumb = "»", 
+              separator = "➜", 
+              group = "+", 
+            },
+            -- Minimal presets for faster startup
+            plugins = {
+              presets = {
+                operators = false,
+                motions = false,
+                text_objects = true,
+                windows = true,
+                nav = true,
+                z = true,
+                g = true,
+              },
+            },
+          })
+        end
+      end, 50) -- Defer by 50ms
     '';
   };
 }
