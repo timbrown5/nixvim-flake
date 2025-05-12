@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   # Enhanced completion animations and visual feedback
   extraConfigLua = ''
     -- Set up completion highlights for blinking effects
@@ -21,7 +22,7 @@
       end,
       group = vim.api.nvim_create_augroup("custom_completion_highlights", { clear = true }),
     })
-    
+
     -- Set up completion animations - blinking cursor during completion
     vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineChanged" }, {
       pattern = "*",
@@ -33,7 +34,7 @@
       end,
       group = vim.api.nvim_create_augroup("cmdline_blink", { clear = true }),
     })
-    
+
     vim.api.nvim_create_autocmd("CmdlineLeave", {
       pattern = "*",
       callback = function()
@@ -41,7 +42,7 @@
       end,
       group = vim.api.nvim_get_augroup("cmdline_blink"),
     })
-    
+
     -- Add visual cursor blinking when completion menu is visible
     vim.api.nvim_create_autocmd("CompleteChanged", {
       pattern = "*",
@@ -50,7 +51,7 @@
       end,
       group = vim.api.nvim_create_augroup("completion_blink", { clear = true }),
     })
-    
+
     vim.api.nvim_create_autocmd("CompleteDone", {
       pattern = "*",
       callback = function()
@@ -58,7 +59,7 @@
       end,
       group = vim.api.nvim_get_augroup("completion_blink"),
     })
-    
+
     -- Python-specific completion settings
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "python",

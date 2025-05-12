@@ -94,6 +94,7 @@ You can enable all optional dependencies with a single flag:
     };
   };
 }
+```
 
 ## Core Plugins
 

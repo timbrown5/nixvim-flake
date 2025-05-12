@@ -3,14 +3,15 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   # Configure Lua LSP runtime paths properly
   extraConfigLua = ''
     -- Set up Lua LSP properly with runtime paths
     local runtime_path = vim.split(package.path, ';')
     table.insert(runtime_path, "lua/?.lua")
     table.insert(runtime_path, "lua/?/init.lua")
-    
+
     -- Configure Lua LSP after it's loaded
     vim.api.nvim_create_autocmd("LspAttach", {
       callback = function(args)

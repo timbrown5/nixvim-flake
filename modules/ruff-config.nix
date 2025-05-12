@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   # Configure ruff for Python
   extraConfigLua = ''
     -- Set up default config file for ruff

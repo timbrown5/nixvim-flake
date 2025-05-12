@@ -3,12 +3,13 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   # Debug setup with latest API
   plugins.dap = {
     enable = true;
   };
-  
+
   # DAP UI and extensions with updated API paths
   plugins.dap-python.enable = true;
   plugins.dap-ui = {
@@ -20,32 +21,35 @@
       };
       floating = {
         mappings = {
-          close = ["<Esc>" "q"];
+          close = [
+            "<Esc>"
+            "q"
+          ];
         };
       };
     };
   };
   plugins.dap-virtual-text.enable = true;
-  
+
   # Set up debug configurations in Lua to avoid escaping issues
   extraConfigLua = ''
     -- Set up adapters in Lua
     local dap = require('dap')
-    
+
     -- Python adapter
     dap.adapters.python = {
       type = 'executable',
       command = 'python',
       args = {'-m', 'debugpy.adapter'}
     }
-    
+
     -- Use LLDB adapter instead of cppdbg
     dap.adapters.lldb = {
       type = 'executable',
       command = '${pkgs.lldb}/bin/lldb-vscode', 
       name = 'lldb'
     }
-    
+
     -- Python configurations
     dap.configurations.python = {
       {
@@ -56,7 +60,7 @@
         pythonPath = 'python',
       }
     }
-    
+
     -- C/C++ configurations using LLDB
     dap.configurations.cpp = {
       {
@@ -74,7 +78,7 @@
     }
     dap.configurations.c = dap.configurations.cpp
   '';
-  
+
   # Add development tools to system packages
   extraPackages = [
     pkgs.lldb

@@ -3,12 +3,13 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   # Filetype-specific configurations
   extraConfigLua = ''
     -- Create an augroup for filetype-specific settings
     local filetype_group = vim.api.nvim_create_augroup("filetype_settings", { clear = true })
-    
+
     -- Nix specific settings
     vim.api.nvim_create_autocmd("FileType", {
       group = filetype_group,
@@ -24,7 +25,7 @@
         vim.keymap.set("n", "<leader>nf", ":!nix flake update<CR>", { buffer = true, desc = "Update flake inputs" })
       end
     })
-    
+
     -- Lua specific settings
     vim.api.nvim_create_autocmd("FileType", {
       group = filetype_group,
@@ -40,7 +41,7 @@
         vim.keymap.set("n", "K", ":lua vim.lsp.buf.hover()<CR>", { buffer = true, silent = true })
       end
     })
-    
+
     -- Terraform/HCL specific settings
     vim.api.nvim_create_autocmd("FileType", {
       group = filetype_group,
@@ -56,7 +57,7 @@
         vim.keymap.set("n", "<leader>tv", ":!terraform validate<CR>", { buffer = true, desc = "Terraform validate" })
       end
     })
-    
+
     -- Python specific settings
     vim.api.nvim_create_autocmd("FileType", {
       group = filetype_group,

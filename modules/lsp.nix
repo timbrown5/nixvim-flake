@@ -3,20 +3,21 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   # Minimal LSP Configuration
   plugins.lsp = {
     enable = true;
-    
+
     # Only enable essential LSP servers
     servers = {
       # Python tools
       pyright.enable = true;
       ruff = {
         enable = true;
-        package = lib.mkForce null;  # Let the user install ruff externally
+        package = lib.mkForce null; # Let the user install ruff externally
       };
-      
+
       # Minimal Lua settings
       lua_ls = {
         enable = true;
@@ -25,14 +26,14 @@
           telemetry.enable = false;
         };
       };
-      
+
       # Nix support
       nil_ls.enable = true;
-      
+
       # C/C++
       clangd.enable = true;
     };
-    
+
     # Use keymaps here, not in extraConfigLua - REMOVE DUPLICATES
     keymaps = {
       lspBuf = {
@@ -46,11 +47,11 @@
       };
     };
   };
-  
+
   # Simplified completion
   plugins.cmp = {
     enable = true;
-    
+
     settings = {
       mapping = {
         "<C-Space>" = "cmp.mapping.complete()";
@@ -58,18 +59,18 @@
         "<Tab>" = "cmp.mapping.select_next_item()";
         "<S-Tab>" = "cmp.mapping.select_prev_item()";
       };
-      
+
       sources = [
         { name = "nvim_lsp"; }
         { name = "luasnip"; }
         { name = "buffer"; }
         { name = "path"; }
       ];
-      
+
       snippet.expand = "function(args) require('luasnip').lsp_expand(args.body) end";
     };
   };
-  
+
   # Only include essential plugins
   extraPlugins = with pkgs.vimPlugins; [
     cmp-nvim-lsp
@@ -77,7 +78,7 @@
     cmp-path
     luasnip
   ];
-  
+
   # Add minimal Lua for setting up LSP keybinding descriptions
   extraConfigLua = ''
     -- Use autocmd to describe LSP keybindings to which-key when LSP attaches
