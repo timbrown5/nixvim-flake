@@ -84,72 +84,7 @@
       nvim-web-devicons
     ];
     
-    # Optimized plugin configuration with lazy loading
-    extraConfigLua = ''
-      -- Defer plugin loading
-      vim.schedule(function()
-        -- Load Snacks after startup
-        local ok, snacks = pcall(require, 'snacks')
-        if ok then
-          snacks.setup({
-            explorer = { 
-              width = 30, 
-              side = "left",
-              -- Don't auto-open
-              auto_open = false,
-            },
-            picker = { 
-              previewer = true,
-              -- Reduce initial buffer size
-              initial_mode = "insert",
-            }
-          })
-        end
-        
-        -- Load web-devicons after startup
-        local devicons_ok, devicons = pcall(require, 'nvim-web-devicons')
-        if devicons_ok then
-          devicons.setup()
-        end
-      end)
-      
-      -- Lazy load Leap on first use
-      vim.api.nvim_create_autocmd("CmdlineEnter", {
-        pattern = "*",
-        once = true,
-        callback = function()
-          local leap_ok, leap = pcall(require, 'leap')
-          if leap_ok then
-            leap.add_default_mappings()
-          end
-        end
-      })
-      
-      -- Defer which-key setup
-      vim.defer_fn(function()
-        local which_key_ok, which_key = pcall(require, 'which-key')
-        if which_key_ok then
-          which_key.setup({
-            icons = {
-              breadcrumb = "»", 
-              separator = "➜", 
-              group = "+", 
-            },
-            -- Minimal presets for faster startup
-            plugins = {
-              presets = {
-                operators = false,
-                motions = false,
-                text_objects = true,
-                windows = true,
-                nav = true,
-                z = true,
-                g = true,
-              },
-            },
-          })
-        end
-      end, 50) -- Defer by 50ms
-    '';
+    # Import plugin configuration from Lua file
+    extraConfigLua = builtins.readFile ../lua/plugins.lua;
   };
 }

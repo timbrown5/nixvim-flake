@@ -31,85 +31,42 @@ in {
   
   # Colorscheme configuration based on theme
   config = {
-    # Catppuccin theme configuration - minimal integrations for startup
+    # Catppuccin theme configuration - load immediately with all integrations
     colorschemes.catppuccin = lib.mkIf isCatppuccin {
       enable = true;
       settings = {
         flavour = if themeVariant != null then themeVariant else defaultFlavor;
-        # Reduce integrations for faster startup
+        # Enable all integrations for proper initial display
         integrations = {
-          cmp = false; # Load on demand
-          gitsigns = false; # Load on demand
-          treesitter = true; # Keep for syntax
+          cmp = true;
+          gitsigns = true;
+          treesitter = true;
           dap = {
-            enable = false;
-            enableUI = false;
+            enable = true;
+            enableUI = true;
           };
           native_lsp.enabled = true;
-          indent_blankline.enabled = false;
-          # Disable other integrations
-          telescope = false;
-          neotree = false;
-          which_key = false;
+          indent_blankline.enabled = true;
+          which_key = true;
+          telescope = true;
+          neotree = true;
+          leap = true;
+          dashboard = true;
+          notify = true;
+          mini = true;
         };
       };
     };
     
     # Custom theme configuration for non-catppuccin themes
+    # Load immediately in extraConfigLuaPre
     extraConfigLuaPre = lib.mkIf (!isCatppuccin) ''
       vim.cmd('packadd ${theme}')
       vim.cmd('colorscheme ${theme}')
     '';
     
-    # Simplified loading screen - alpha is lighter than dashboard
-    plugins.alpha = {
-      enable = true;
-      layout = [
-        { type = "padding"; val = 2; }
-        { 
-          type = "text";
-          val = [
-            "Neovim"
-          ];
-          opts = {
-            position = "center";
-            hl = "Type";
-          };
-        }
-        { type = "padding"; val = 1; }
-        {
-          type = "group";
-          val = [
-            {
-              type = "button";
-              val = "  [f] Files";
-              on_press = "Snacks pick_files";
-              opts = {
-                position = "center";
-                shortcut = "f";
-                cursor = 3;
-                width = 20;
-                align_shortcut = "left";
-                hl_shortcut = "Keyword";
-              };
-            }
-            {
-              type = "button";
-              val = "  [e] Explorer";
-              on_press = "Snacks explorer";
-              opts = {
-                position = "center";
-                shortcut = "e";
-                cursor = 3;
-                width = 20;
-                align_shortcut = "left";
-                hl_shortcut = "Keyword";
-              };
-            }
-          ];
-        }
-      ];
-    };
+    # We'll set up Snacks dashboard in the Lua config
+    # Remove alpha plugin configuration
     
     # Defer lualine - not needed immediately
     plugins.lualine = {
@@ -147,24 +104,5 @@ in {
         debounce = 200; # Longer debounce
       };
     };
-    
-    # Defer loading of UI components
-    extraConfigLua = ''
-      -- Defer lualine setup to improve startup
-      vim.defer_fn(function()
-        local ok, lualine = pcall(require, 'lualine')
-        if ok then
-          lualine.setup()
-        end
-      end, 100)
-      
-      -- Defer indent-blankline
-      vim.defer_fn(function()
-        local ok, ibl = pcall(require, 'ibl')
-        if ok then
-          ibl.setup()
-        end
-      end, 150)
-    '';
   };
 }
