@@ -55,14 +55,16 @@
         fromVscode = [];
       };
       
-      # Mini modules - selective loading
+           # Mini modules - now includes more modules  
       mini = {
         enable = true;
         modules = {
-          icons = { }; # Empty config is fine for basic setup
+          icons = { };
+          pairs = { };
+          surround = { };
         };
-      };
-      
+      }; 
+  
       # Defer LSP signature
       lsp-signature = {
         enable = true;
@@ -74,16 +76,22 @@
       };
     };
     
-    # Lazy load external plugins
+   # Lazy load external plugins
     extraPlugins = with pkgs.vimPlugins; [
       # These will be configured for lazy loading
       snacks-nvim
-      leap-nvim
+      flash-nvim          # Replaces leap for navigation
       vim-repeat
       plenary-nvim
       nvim-web-devicons
-    ];
-    
+      
+      # Additional useful plugins
+      todo-comments-nvim   # Folke's todo comments
+      bufferline-nvim      # Visual buffer tabs
+      persistence-nvim     # Session management
+      trouble-nvim         # Better diagnostics view
+    ]; 
+
     # Import plugin configuration from Lua file
     extraConfigLua = builtins.readFile ../lua/plugins.lua;
   };
