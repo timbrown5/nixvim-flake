@@ -1,18 +1,21 @@
--- Automatically load all plugin configurations
+-- Main plugin loader - simple and robust
 local config_path = vim.fn.stdpath('config') .. '/lua/plugins'
 
--- Read directory contents
-local files = vim.fn.readdir(config_path, function(name)
-  return name:match("%.lua$") and name ~= "init.lua"
-end)
+-- Get list of plugin files
+local plugin_files = vim.fn.glob(config_path .. '/*.lua', false, true)
 
--- Load each plugin file
-for _, filename in ipairs(files) do
-  local module_name = filename:gsub("%.lua$", "")
-  vim.schedule(function()
-    local ok, err = pcall(require, "plugins." .. module_name)
-    if not ok then
-      vim.notify("Error loading plugin " .. module_name .. ": " .. err, vim.log.levels.ERROR)
-    end
-  end)
+-- Filter and load each plugin file
+for _, filepath in ipairs(plugin_files) do
+  local filename = vim.fn.fnamemodify(filepath, ':t')
+  
+  -- Skip init.lua
+  if filename ~= 'init.lua' then
+    -- Use dofile instead of require to avoid module caching issues
+    vim.schedule(function()
+      local ok, err = pcall(dofile, filepath)
+      if not ok then
+        vim.notify('Error loading plugin ' .. filename .. ': ' .. tostring(err), vim.log.levels.ERROR)
+      end
+    end)
+  end
 end

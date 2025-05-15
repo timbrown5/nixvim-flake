@@ -93,6 +93,6 @@
     ]; 
 
     # Import plugin configuration from Lua file
-    extraConfigLua = builtins.readFile ../lua/plugins.lua;
+    extraConfigLua = builtins.readFile ../lua/plugins/init.lua;
   };
 }
