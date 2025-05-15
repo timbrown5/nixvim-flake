@@ -1,292 +1,180 @@
-# NixVim - Modular Neovim Configuration
+# NixVim with NvChad
 
-A batteries-included, modular Neovim configuration using Nix Flakes and NixVim. This setup provides a powerful, language-aware IDE experience with lazy-loading for optimal performance.
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/previews/macchiato.webp" alt="Default Theme: Catppuccin Macchiato" width="600">
-  <p><em>Default Theme: Catppuccin Macchiato</em></p>
-</div>
+A minimal Neovim configuration using NixVim with the official NvChad packages from nixpkgs. This gives you the NvChad experience with the declarative power of Nix.
 
 ## Features
 
-- **Modular Architecture**: Organized into logical components for easy maintenance
-- **Lazy Loading**: LSP servers and plugins only load when needed
-- **Catppuccin Theme**: Beautiful and modern Macchiato color scheme by default
-- **IDE Features**: Language servers, completion, diagnostics, and debugging
-- **Custom Key Mappings**: Intuitive shortcuts for common operations
-- **Language Support**: Specialized configurations for Python, Nix, Lua, Terraform, and C
-- **Clipboard Integration**: Works seamlessly across Linux and macOS
-- **Snacks Explorer/Picker**: Modern replacements for neotree and telescope
+- **Official NvChad packages**: Uses `vimPlugins.nvchad` and `vimPlugins.nvchad-ui` from nixpkgs
+- **Minimal configuration**: Just enough setup to get NvChad working properly
+- **Extensible**: Easy to add plugins and customizations
+- **NixVim benefits**: Reproducible, declarative configuration
+
+## How it works
+
+This configuration uses the official NvChad packages from nixpkgs:
+- `vimPlugins.nvchad` - The core NvChad configuration
+- `vimPlugins.nvchad-ui` - NvChad's UI components (statusline, tabline, etc.)
+
+The configuration:
+1. Loads the NvChad packages
+2. Sets up minimal required options
+3. Initializes NvChad's configuration
+4. Adds essential plugins that integrate well with NvChad
 
 ## Installation
 
-### Prerequisites
-
-- Nix package manager with flakes enabled
-- Git
-
-### Quick Install
-
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/nixvim-config.git
-cd nixvim-config
+git clone https://github.com/your-username/nixvim-nvchad.git
+cd nixvim-nvchad
 
-# Run directly from the repository
+# Run directly
 nix run .
 
-# Or build and install
+# Or build
 nix build
-./result/bin/nvim
 ```
 
-### System Integration
-
-Add to your `configuration.nix` or `home.nix`:
-
-```nix
-{
-  inputs.nixvim-config.url = "github:your-username/nixvim-config";
-  
-  outputs = { self, nixpkgs, nixvim-config, ... }: {
-    # For NixOS
-    nixosConfigurations.your-hostname = {
-      environment.systemPackages = [ nixvim-config.packages.${system}.default ];
-    };
-    
-    # Or for Home Manager
-    homeConfigurations.your-username = {
-      home.packages = [ nixvim-config.packages.${system}.default ];
-    };
-  };
-}
-```
-
-## Optional Dependencies
-
-This configuration includes optional dependencies that enhance functionality:
-
-### Installation with Optional Dependencies
-
-You can enable all optional dependencies with a single flag:
-
-```nix
-# In your flake.nix
-{
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixvim-config.url = "github:timbrown5/nixvim-flake";
-  };
-  
-  outputs = { self, nixpkgs, nixvim-config, ... }: {
-    # Enable all optional dependencies
-    nixosConfigurations.your-hostname = {
-      environment.systemPackages = [ 
-        nixvim-config.packages.${system}.mkNvimWithTheme {
-          enableOptionalDeps = true;  # Enable all optional dependencies
-        }
-      ];
-    };
-    
-    # Or use the pre-configured full version with all dependencies
-    homeConfigurations.your-username = {
-      home.packages = [ nixvim-config.packages.${system}.nvimFull ];
-    };
-  };
-}
-```
-
-## Core Plugins
-
-- **Snacks.nvim**: File explorer and picker
-- **Leap.nvim**: Quick navigation (snipe functionality)
-- **LSP**: Language Server Protocol support
-- **nvim-cmp**: Completion engine
-- **DAP**: Debug Adapter Protocol support
-- **Treesitter**: Advanced syntax highlighting
-- **Dashboard**: Beautiful start screen
-- **Catppuccin**: Modern colorscheme
-
-## Keyboard Shortcuts
-
-> All shortcuts use `Space` as the leader key
-
-### General
-
-| Shortcut      | Description                    |
-|---------------|--------------------------------|
-| `<leader>f`   | Format document                |
-| `<leader>d`   | Delete without copying         |
-| `<leader>dd`  | Delete line without copying    |
-| `<leader>p`   | Paste from yank register (0)   |
-| `<leader>P`   | Paste before from yank register|
-
-### Navigation
-
-| Shortcut      | Description                    |
-|---------------|--------------------------------|
-| `<leader>e`   | Toggle Snacks Explorer         |
-| `<leader>ff`  | Find Files with Snacks         |
-| `<leader>fg`  | Live Grep with Snacks          |
-| `<leader>fb`  | Find Buffers with Snacks       |
-| `s{char}{char}` | Jump forward (Leap/Snipe)    |
-| `S{char}{char}` | Jump backward (Leap/Snipe)   |
-
-### LSP
-
-| Shortcut      | Description                    |
-|---------------|--------------------------------|
-| `<leader>ca`  | Code Action                    |
-| `<leader>rn`  | Rename symbol                  |
-| `gd`          | Go to Definition               |
-| `gr`          | References                     |
-| `K`           | Hover Documentation            |
-
-### Debugging
-
-| Shortcut      | Description                    |
-|---------------|--------------------------------|
-| `<leader>Db`  | Toggle Breakpoint              |
-| `<leader>Dc`  | Continue                       |
-| `<leader>Dj`  | Step Over                      |
-| `<leader>Dk`  | Step Back                      |
-| `<leader>Dl`  | Step Into                      |
-| `<leader>Dq`  | Terminate                      |
-| `<leader>Dr`  | Open REPL                      |
-| `<leader>Du`  | Toggle Debug UI                |
-
-### Python (with Ruff)
-
-| Shortcut      | Description                    |
-|---------------|--------------------------------|
-| `<leader>pr`  | Run Python file                |
-| `<leader>pt`  | Run pytest                     |
-| `<leader>pf`  | Format with Ruff               |
-| `<leader>pi`  | Organize imports with Ruff     |
-
-### Nix
-
-| Shortcut      | Description                    |
-|---------------|--------------------------------|
-| `<leader>ne`  | Edit flake.nix                 |
-| `<leader>nb`  | Run nix build                  |
-| `<leader>nf`  | Update flake inputs            |
-
-### Terraform
-
-| Shortcut      | Description                    |
-|---------------|--------------------------------|
-| `<leader>ti`  | Terraform init                 |
-| `<leader>tp`  | Terraform plan                 |
-| `<leader>ta`  | Terraform apply                |
-| `<leader>tv`  | Terraform validate             |
-
-## Language Support
-
-### Python
-- **LSP**: Pyright for type checking and intellisense
-- **Linting/Formatting**: Ruff for fast, comprehensive linting and formatting
-- **Debugging**: DAP with Python support
-- **Autoformat**: Automatic formatting on save
-
-### Nix
-- **LSP**: nil_ls for Nix language support
-- **Formatting**: nixfmt integrated
-- **Syntax**: Enhanced syntax highlighting with vim-nix
-- **Shortcuts**: Quick access to common Nix commands
-
-### Lua
-- **LSP**: lua-ls with Neovim API awareness
-- **Formatting**: Built-in formatter configured
-- **Snippets**: Common Vim API expansions
-- **Completions**: Neovim-aware completions
-
-### Terraform
-- **LSP**: terraformls for HCL support
-- **Linting**: tflint integration
-- **Syntax**: vim-terraform for enhanced highlighting
-- **Commands**: Quick access to common Terraform operations
-
-### C/C++
-- **LSP**: clangd for advanced code intelligence
-- **Debugging**: GDB integration through DAP
-- **Completion**: Full type-aware completions
-
-## Architecture
-
-The configuration is organized into modular components:
+## File Structure
 
 ```
 .
-├── flake.nix           # Main entry point
+├── flake.nix                 # Main flake configuration
+├── lua/                      # Lua configuration files
+│   ├── nvchad-init.lua      # NvChad initialization
+│   ├── keybindings.lua      # All keybindings
+│   └── user-config.lua      # User customizations
 └── modules/
-    ├── base.nix        # Core Vim settings
-    ├── ui.nix          # Theme and UI components
-    ├── lsp.nix         # Language server and completion
-    ├── keymaps.nix     # Key mappings
-    ├── plugins.nix     # Plugin setup
-    ├── debugger.nix    # Debugging configuration
-    ├── filetype-config.nix # Language-specific settings
-    └── ruff-config.nix # Python formatter configuration
+    ├── nvchad-config.nix    # NvChad setup and core plugins
+    └── user-config.nix      # User customizations
 ```
 
 ## Customization
 
-### Using Custom Themes
+### Adding Plugins
 
-You can add your own custom themes by using the `mkCustomTheme` function:
+Edit `modules/user-config.nix`:
 
 ```nix
-# In a separate flake.nix
-{
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixvim-config.url = "github:your-username/nixvim-config";
-  };
-
-  outputs = { self, nixpkgs, nixvim-config }: {
-    packages.x86_64-linux.default = nixvim-config.packages.x86_64-linux.mkCustomTheme {
-      themeName = "awesome-theme";  # Name used with :colorscheme command
-      themePlugin = pkgs.vimPlugins.awesome-theme;  # Your theme plugin
-      
-      # Optional overlay if your theme isn't in nixpkgs yet
-      overlay = final: prev: {
-        vimPlugins = prev.vimPlugins // {
-          awesome-theme = final.vimUtils.buildVimPlugin {
-            name = "awesome-theme";
-            src = final.fetchFromGitHub {
-              owner = "author";
-              repo = "awesome-theme";
-              rev = "v1.0";
-              sha256 = "sha256-...";
-            };
-          };
-        };
-      };
-    };
-  };
-}
+extraPlugins = with pkgs.vimPlugins; [
+  vim-surround
+  hop-nvim
+  # Add more plugins here
+];
 ```
 
-See the `examples/custom-theme.nix` file for a complete example.
+### Adding Keybindings
 
-### Modifying Configuration
+Edit `lua/keybindings.lua` or add custom keybindings in `lua/user-config.lua`:
 
-To modify other aspects of the configuration:
+```lua
+-- In keybindings.lua for core keybindings
+map('n', '<leader>ff', ':lua Snacks.picker.files()<CR>', { desc = 'Find files' })
 
-1. Edit the appropriate module file for the component you want to change
-2. Run `nix develop` to enter a shell with your changes
-3. Test your changes with `nvim`
-4. Build with `nix build` when satisfied
+-- In user-config.lua for user-specific keybindings
+map('n', '<leader>gg', ':LazyGit<CR>', { desc = 'Open LazyGit' })
+```
 
-## Credits
+### Adding LSP Servers
 
-- [NixVim](https://github.com/nix-community/nixvim)
-- [Catppuccin](https://github.com/catppuccin/nvim)
-- [Snacks.nvim](https://github.com/tjdevries/snacks.nvim)
-- [Leap.nvim](https://github.com/ggandor/leap.nvim)
-- [Ruff](https://github.com/charliermarsh/ruff)
+Edit `modules/user-config.nix`:
 
-## Disclaimer
+```nix
+plugins.lsp.servers = {
+  tsserver.enable = true;
+  gopls.enable = true;
+};
+```
 
-This README and the NixVim configuration were generated with assistance from Claude, an AI assistant by Anthropic. While the configuration is fully functional, you may want to review and customize it to meet your specific needs.
+### Custom Lua Configuration
+
+Edit `lua/user-config.lua` for any Lua customizations:
+
+```lua
+-- Custom settings
+vim.opt.wrap = false
+vim.opt.scrolloff = 8
+
+-- Override NvChad theme
+vim.g.nvchad_theme = "tokyonight"
+
+-- Custom functions and commands
+vim.api.nvim_create_user_command("MyCommand", function()
+  -- Implementation
+end, {})
+```
+
+The advantage of having separate Lua files is that you get full LSP support (syntax highlighting, completion, diagnostics) when editing them in Neovim.
+
+## Default Keybindings
+
+All keybindings are now defined in `lua/keybindings.lua`. Some highlights:
+
+| Key | Description |
+|-----|-------------|
+| `<leader>w` | Save file |
+| `<leader>q` | Quit |
+| `<C-n>` | Toggle file tree |
+| `<leader>e` | Focus file tree |
+| `<leader>ff` | Find files |
+| `<leader>fw` | Live grep |
+| `<leader>fb` | Find buffers |
+| `<leader>fh` | Find help |
+| `gd` | Go to definition |
+| `gr` | Go to references |
+| `K` | Hover |
+| `<leader>ca` | Code action |
+| `<leader>rn` | Rename |
+| `<leader>f` | Format |
+
+Many more keybindings are available - check `lua/keybindings.lua` for the complete list.
+
+## Default Keybindings
+
+The configuration includes basic keybindings that work with NvChad:
+
+| Key | Description |
+|-----|-------------|
+| `<leader>w` | Save file |
+| `<leader>q` | Quit |
+| `<C-n>` | Toggle file tree |
+| `<leader>e` | Focus file tree |
+| `<leader>ff` | Find files |
+| `<leader>fw` | Live grep |
+| `<leader>fb` | Find buffers |
+| `<leader>fh` | Find help |
+| `gd` | Go to definition |
+| `gr` | Go to references |
+| `K` | Hover |
+| `<leader>ca` | Code action |
+| `<leader>rn` | Rename |
+
+Many more keybindings are available through NvChad's default configuration.
+
+## Included Plugins
+
+- **NvChad core**: Base configuration and UI
+- **Treesitter**: Syntax highlighting
+- **LSP**: Language server support (lua_ls, nil_ls, pyright by default)
+- **Blink.cmp**: Modern, performant completion plugin
+- **Telescope**: Fuzzy finder
+- **nvim-tree**: File explorer
+- **gitsigns**: Git integration
+- **which-key**: Keymap hints
+
+## Tips
+
+1. NvChad's full documentation is available at [nvchad.com](https://nvchad.com)
+2. You can change the theme by setting `vim.g.nvchad_theme` in the Lua configuration
+3. The configuration is minimal on purpose - add only what you need
+4. Check `:checkhealth` after installation to ensure everything is working
+
+## Troubleshooting
+
+1. If the UI doesn't look right, make sure you have a [Nerd Font](https://www.nerdfonts.com/) installed
+2. Run `:checkhealth` to diagnose issues
+3. Check the NvChad cache directory: `~/.local/share/nvim/nvchad/`
+
+## License
+
+This configuration is available under the MIT license.
