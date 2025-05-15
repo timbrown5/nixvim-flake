@@ -1,68 +1,74 @@
--- User customizations
--- Add any custom Lua configuration here
--- This runs after NvChad is loaded
+-- User configuration
+-- This file contains user-specific customizations
 
--- Example: Custom autocommands
-vim.api.nvim_create_autocmd("TextYankPost", {
-  group = vim.api.nvim_create_augroup("highlight_yank", { clear = true }),
-  callback = function()
-    vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
-  end,
+-- Custom settings
+vim.opt.colorcolumn = "80"
+
+-- Set up custom highlights
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "*",
+	callback = function()
+		vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+		vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+	end
 })
 
--- Example: Override NvChad settings
--- vim.g.nvchad_theme = "tokyonight"  -- Change theme
+-- Highlight on yank
+vim.api.nvim_create_autocmd("TextYankPost", {
+	group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank({ timeout = 200 })
+	end
+})
 
--- Example: Custom options
--- vim.opt.wrap = false
--- vim.opt.scrolloff = 8
--- vim.opt.sidescrolloff = 8
+-- Format on save for more file types
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = { "*.lua", "*.nix", "*.ts", "*.tsx", "*.js", "*.jsx" },
+	callback = function()
+		if not vim.g.disable_autoformat and not vim.b.disable_autoformat then
+			vim.lsp.buf.format({ async = false })
+		end
+	end
+})
 
--- Example: Custom commands
-vim.api.nvim_create_user_command("FormatToggle", function()
-  vim.g.auto_format = not vim.g.auto_format
-  vim.notify("Auto-format " .. (vim.g.auto_format and "enabled" or "disabled"))
-end, {})
+-- Diagnostics config with nice prefix
+vim.diagnostic.config({
+	virtual_text = {
+		prefix = "●" -- Nice circle prefix for inline diagnostics
+	},
+	severity_sort = true,
+	float = {
+		border = "rounded",
+		source = "always"
+	}
+})
 
--- Example: Custom functions
-_G.custom_functions = {}
-
-_G.custom_functions.toggle_diagnostics = function()
-  if vim.diagnostic.is_disabled() then
-    vim.diagnostic.enable()
-    vim.notify("Diagnostics enabled")
-  else
-    vim.diagnostic.disable()
-    vim.notify("Diagnostics disabled")
-  end
+-- Configure Snacks if available
+local snacks_ok, snacks = pcall(require, "snacks")
+if snacks_ok then
+	-- Any runtime Snacks configuration can go here
+	-- Most config is already in the Nix file
 end
 
--- Custom keybindings
-local map = vim.keymap.set
+-- Custom commands for format toggling
+vim.api.nvim_create_user_command("FormatDisable", function(args)
+	if args.bang then
+		-- FormatDisable! will disable formatting just for this buffer
+		vim.b.disable_autoformat = true
+		vim.notify("Format disabled for buffer", vim.log.levels.INFO)
+	else
+		vim.g.disable_autoformat = true
+		vim.notify("Format disabled globally", vim.log.levels.INFO)
+	end
+end, {
+	desc = "Disable autoformat-on-save",
+	bang = true
+})
 
--- Add your custom keybindings here
--- Examples:
--- map('n', '<leader>gg', ':LazyGit<CR>', { desc = 'Open LazyGit' })
--- map('n', '<leader>tt', ':ToggleTerm<CR>', { desc = 'Toggle terminal' })
--- map('n', '<leader>td', _G.custom_functions.toggle_diagnostics, { desc = 'Toggle diagnostics' })
-
--- Custom Snacks picker configurations
--- You can create custom pickers like this:
-map('n', '<leader>fp', function()
-  Snacks.picker({
-    source = "files",
-    title = "Project Files",
-    cwd = vim.fn.getcwd(),
-    layout = "vertical",
-  })
-end, { desc = 'Find project files' })
-
--- Or use the picker API for custom sources
--- Example: picker for TODO comments
-map('n', '<leader>ft', function()
-  Snacks.picker.grep({
-    search = "TODO|FIXME|HACK|NOTE",
-    regex = true,
-    title = "Find TODOs",
-  })
-end, { desc = 'Find TODO comments' })
+vim.api.nvim_create_user_command("FormatEnable", function()
+	vim.b.disable_autoformat = false
+	vim.g.disable_autoformat = false
+	vim.notify("Format enabled", vim.log.levels.INFO)
+end, {
+	desc = "Re-enable autoformat-on-save"
+})

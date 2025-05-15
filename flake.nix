@@ -1,42 +1,51 @@
 {
+  description = "NixVim + NvChad Configuration";
+
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixvim.url = "github:nix-community/nixvim";
-    flake-parts.url = "github:hercules-ci/flake-parts";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { nixpkgs, nixvim, flake-parts, ... }@inputs:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
-
-      perSystem = { pkgs, system, lib, ... }: 
+  outputs = { self, nixpkgs, nixvim, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
       let
+        pkgs = nixpkgs.legacyPackages.${system};
         nixvim' = nixvim.legacyPackages.${system};
         
-        # Simple NvChad-based configuration
-        nvchad-config = nixvim'.makeNixvimWithModule {
+        nvimConfig = nixvim'.makeNixvimWithModule {
           inherit pkgs;
-          module = {
-            # Import all configuration modules
-            imports = [ 
-              ./modules/nvchad-config.nix
-              ./modules/user-config.nix
-            ];
+          module = ./modules;
+          # You can add extra special args here if needed
+          # extraSpecialArgs = { inherit self; };
+        };
+      in
+      {
+        packages = {
+          default = nvimConfig;
+          nvim = nvimConfig;
+        };
+
+        apps = {
+          default = {
+            type = "app";
+            program = "${nvimConfig}/bin/nvim";
+          };
+          nvim = self.apps.${system}.default;
+        };
+
+        # Development shell with the configured neovim
+        devShells = {
+          default = pkgs.mkShell {
+            buildInputs = [ nvimConfig ];
+            shellHook = ''
+              echo "NixVim + NvChad environment loaded"
+              echo "Run 'nvim' to start"
+            '';
           };
         };
-      in {
-        packages = {
-          default = nvchad-config;
-        };
-        
-        devShells.default = pkgs.mkShell {
-          buildInputs = [ nvchad-config ];
-        };
-      };
-    };
+      });
 }

@@ -1,180 +1,220 @@
-# NixVim with NvChad
+# Minimal NixVim + NvChad Configuration
 
-A minimal Neovim configuration using NixVim with the official NvChad packages from nixpkgs. This gives you the NvChad experience with the declarative power of Nix.
+This is a minimal working example of a NixVim configuration that integrates NvChad, providing a modern Neovim experience with the declarative power of Nix.
 
 ## Features
 
-- **Official NvChad packages**: Uses `vimPlugins.nvchad` and `vimPlugins.nvchad-ui` from nixpkgs
-- **Minimal configuration**: Just enough setup to get NvChad working properly
-- **Extensible**: Easy to add plugins and customizations
-- **NixVim benefits**: Reproducible, declarative configuration
+- ✨ NvChad integration with official nixpkgs packages
+- 🚀 Modern completion with blink.cmp
+- 🔍 Fast picker and file explorer with Snacks.nvim
+- 🌳 File explorer with Snacks explorer
+- 💡 LSP support for multiple languages
+- 🎨 Beautiful UI with NvChad themes
+- ⚡ Fast startup with lazy loading
+- 📦 Fully reproducible with Nix
 
-## How it works
+## Structure
 
-This configuration uses the official NvChad packages from nixpkgs:
-- `vimPlugins.nvchad` - The core NvChad configuration
-- `vimPlugins.nvchad-ui` - NvChad's UI components (statusline, tabline, etc.)
+```
+.
+├── flake.nix              # Main flake configuration
+├── modules/               # Nix modules
+│   ├── default.nix        # Main configuration module
+│   ├── mappings.nix       # Empty (keybindings moved to Lua)
+│   ├── options.nix        # Vim options
+│   ├── nvchad.nix         # NvChad-specific configuration
+│   └── core-plugins.nix   # Additional plugins
+└── lua/
+    ├── config/            # Lua configuration files
+    │   ├── nvchad-init.lua   # NvChad initialization
+    │   ├── user-config.lua   # User customizations
+    │   └── keybindings.lua   # Loads all keybindings
+    └── keybinds/          # Modular keybinding files
+        ├── init.lua          # Loads all keybinding modules
+        ├── general.lua       # General operations
+        ├── navigation.lua    # Window/split navigation
+        ├── file-tree.lua     # File explorer keybindings
+        ├── snacks-picker.lua # Snacks picker bindings
+        ├── snacks.lua        # Other Snacks utilities
+        ├── lsp.lua          # LSP keybindings
+        ├── git.lua          # Git operations
+        ├── clipboard.lua     # Clipboard/register ops
+        ├── terminal.lua      # Terminal keybindings
+        ├── tabs.lua         # Tab management
+        └── diagnostics.lua   # Diagnostic keybindings
+```
 
-The configuration:
-1. Loads the NvChad packages
-2. Sets up minimal required options
-3. Initializes NvChad's configuration
-4. Adds essential plugins that integrate well with NvChad
+## Usage
 
-## Installation
+### Build and Run
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/nixvim-nvchad.git
+git clone <your-repo>
 cd nixvim-nvchad
 
 # Run directly
 nix run .
 
-# Or build
-nix build
+# Or build it
+nix build .
+result/bin/nvim
+
+# Add to your system flake
+{
+  inputs.nixvim-nvchad.url = "github:yourusername/nixvim-nvchad";
+  
+  # In your configuration
+  environment.systemPackages = [
+    inputs.nixvim-nvchad.packages.${system}.default
+  ];
+}
 ```
 
-## File Structure
+### Key Bindings
 
-```
-.
-├── flake.nix                 # Main flake configuration
-├── lua/                      # Lua configuration files
-│   ├── nvchad-init.lua      # NvChad initialization
-│   ├── keybindings.lua      # All keybindings
-│   └── user-config.lua      # User customizations
-└── modules/
-    ├── nvchad-config.nix    # NvChad setup and core plugins
-    └── user-config.nix      # User customizations
-```
+#### General
+- `<Space>` - Leader key
+- `<leader>w` - Save file
+- `<leader>q` - Quit
+- `jk` - Exit insert mode (in insert mode)
+- `u` - Undo
+- `<C-r>` or `U` - Redo (capital U is easier to remember!)
+
+#### Clipboard & Registers
+- Default: yanking/deleting uses system clipboard
+- `<leader>d` - Delete without copying to register
+- `<leader>D` - Delete to end of line without copying
+- `x` - Delete character without copying
+- `<leader>p` - Paste from yank register (register 0)
+- `<leader>P` - Paste from yank register before cursor
+- `<leader>y` - Explicitly yank to system clipboard
+- `<leader>Y` - Yank line to system clipboard
+
+#### File Explorer
+- `<C-n>` - Toggle file explorer
+- `<leader>e` - Focus file explorer
+
+#### Navigation
+- `<C-h/j/k/l>` - Navigate between windows
+
+#### Finding
+- `<leader>ff` - Find files
+- `<leader>fw` - Live grep (search in files)
+- `<leader>fb` - Find buffers
+- `<leader>fh` - Find help
+- `<leader>fr` - Recent files
+- `<leader>fd` - Diagnostics
+- `<leader>fs` - Symbols
+- `<leader>fc` - Commands
+- `<leader>fk` - Keymaps
+
+#### LSP
+- `gd` - Go to definition
+- `gr` - Go to references
+- `gi` - Go to implementation
+- `gt` - Go to type definition
+- `K` - Hover documentation
+- `<leader>ca` - Code action
+- `<leader>rn` - Rename
+- `<leader>f` - Format file
+
+#### Diagnostics
+- `<leader>xx` - Toggle diagnostics
+- `[d` - Previous diagnostic
+- `]d` - Next diagnostic
+- `<leader>d` - Show diagnostic float
+
+#### Git
+- `<leader>gc` - Git commits
+- `<leader>gb` - Git branches
+- `<leader>gs` - Git status
+
+#### Splits & Tabs
+- `<leader>sv` - Split vertically
+- `<leader>sh` - Split horizontally
+- `<leader>se` - Equal split sizes
+- `<leader>sx` - Close split
+- `<leader>to` - New tab
+- `<leader>tx` - Close tab
+
+#### Terminal
+- `<leader>tt` - Toggle terminal
 
 ## Customization
 
 ### Adding Plugins
 
-Edit `modules/user-config.nix`:
+Edit `modules/core-plugins.nix`:
 
 ```nix
 extraPlugins = with pkgs.vimPlugins; [
-  vim-surround
-  hop-nvim
-  # Add more plugins here
+  # Add your plugins here
+  plugin-name
 ];
 ```
 
-### Adding Keybindings
+### Adding Language Servers
 
-Edit `lua/keybindings.lua` or add custom keybindings in `lua/user-config.lua`:
-
-```lua
--- In keybindings.lua for core keybindings
-map('n', '<leader>ff', ':lua Snacks.picker.files()<CR>', { desc = 'Find files' })
-
--- In user-config.lua for user-specific keybindings
-map('n', '<leader>gg', ':LazyGit<CR>', { desc = 'Open LazyGit' })
-```
-
-### Adding LSP Servers
-
-Edit `modules/user-config.nix`:
+Edit `modules/nvchad.nix`:
 
 ```nix
-plugins.lsp.servers = {
-  tsserver.enable = true;
-  gopls.enable = true;
+lsp.servers = {
+  # Add servers here
+  rust_analyzer.enable = true;
 };
+```
+
+### Changing Theme
+
+Edit `modules/nvchad.nix`:
+
+```nix
+colorschemes.catppuccin = {
+  enable = true;
+  settings = {
+    flavour = "mocha";  # or "latte", "frappe", "macchiato"
+  };
+};
+```
+
+### Adding Custom Keybindings
+
+1. Create a new file in `lua/keybinds/` for your plugin or feature
+2. Add your keybindings using `vim.keymap.set`
+3. Add a `require` statement in `lua/keybinds/init.lua`
+
+Example: `lua/keybinds/my-plugin.lua`
+```lua
+local map = vim.keymap.set
+map('n', '<leader>mp', '<cmd>MyPluginCommand<CR>', { desc = 'My plugin command' })
 ```
 
 ### Custom Lua Configuration
 
-Edit `lua/user-config.lua` for any Lua customizations:
-
-```lua
--- Custom settings
-vim.opt.wrap = false
-vim.opt.scrolloff = 8
-
--- Override NvChad theme
-vim.g.nvchad_theme = "tokyonight"
-
--- Custom functions and commands
-vim.api.nvim_create_user_command("MyCommand", function()
-  -- Implementation
-end, {})
-```
-
-The advantage of having separate Lua files is that you get full LSP support (syntax highlighting, completion, diagnostics) when editing them in Neovim.
-
-## Default Keybindings
-
-All keybindings are now defined in `lua/keybindings.lua`. Some highlights:
-
-| Key | Description |
-|-----|-------------|
-| `<leader>w` | Save file |
-| `<leader>q` | Quit |
-| `<C-n>` | Toggle file tree |
-| `<leader>e` | Focus file tree |
-| `<leader>ff` | Find files |
-| `<leader>fw` | Live grep |
-| `<leader>fb` | Find buffers |
-| `<leader>fh` | Find help |
-| `gd` | Go to definition |
-| `gr` | Go to references |
-| `K` | Hover |
-| `<leader>ca` | Code action |
-| `<leader>rn` | Rename |
-| `<leader>f` | Format |
-
-Many more keybindings are available - check `lua/keybindings.lua` for the complete list.
-
-## Default Keybindings
-
-The configuration includes basic keybindings that work with NvChad:
-
-| Key | Description |
-|-----|-------------|
-| `<leader>w` | Save file |
-| `<leader>q` | Quit |
-| `<C-n>` | Toggle file tree |
-| `<leader>e` | Focus file tree |
-| `<leader>ff` | Find files |
-| `<leader>fw` | Live grep |
-| `<leader>fb` | Find buffers |
-| `<leader>fh` | Find help |
-| `gd` | Go to definition |
-| `gr` | Go to references |
-| `K` | Hover |
-| `<leader>ca` | Code action |
-| `<leader>rn` | Rename |
-
-Many more keybindings are available through NvChad's default configuration.
-
-## Included Plugins
-
-- **NvChad core**: Base configuration and UI
-- **Treesitter**: Syntax highlighting
-- **LSP**: Language server support (lua_ls, nil_ls, pyright by default)
-- **Blink.cmp**: Modern, performant completion plugin
-- **Telescope**: Fuzzy finder
-- **nvim-tree**: File explorer
-- **gitsigns**: Git integration
-- **which-key**: Keymap hints
-
-## Tips
-
-1. NvChad's full documentation is available at [nvchad.com](https://nvchad.com)
-2. You can change the theme by setting `vim.g.nvchad_theme` in the Lua configuration
-3. The configuration is minimal on purpose - add only what you need
-4. Check `:checkhealth` after installation to ensure everything is working
+Add your Lua code to `lua/config/user-config.lua`.
 
 ## Troubleshooting
 
-1. If the UI doesn't look right, make sure you have a [Nerd Font](https://www.nerdfonts.com/) installed
-2. Run `:checkhealth` to diagnose issues
-3. Check the NvChad cache directory: `~/.local/share/nvim/nvchad/`
+1. **Check health**: Run `:checkhealth` in Neovim
+2. **Clear cache**: 
+   ```bash
+   rm -rf ~/.local/share/nvim/nvchad
+   rm -rf ~/.cache/nvim
+   ```
+3. **Update flake**: `nix flake update`
+4. **Check logs**: Look at `:messages` for errors
+
+## Requirements
+
+- Nix with flakes enabled
+- A [Nerd Font](https://www.nerdfonts.com/) for icons
+- Git for some features
 
 ## License
 
-This configuration is available under the MIT license.
+MIT
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
