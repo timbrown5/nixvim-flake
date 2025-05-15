@@ -1,104 +1,124 @@
-# Minimal NixVim + NvChad Configuration
+# NixVim + NvChad Configuration
 
-This is a minimal working example of a NixVim configuration that integrates NvChad, providing a modern Neovim experience with the declarative power of Nix.
+This Neovim configuration combines the clean, modern UI of NvChad with the declarative power of NixVim. 
 
 ## Features
 
-- ✨ NvChad integration with official nixpkgs packages
-- 🚀 Modern completion with blink.cmp
-- 🔍 Fast picker and file explorer with Snacks.nvim
-- 🌳 File explorer with Snacks explorer
-- 💡 LSP support for multiple languages
-- 🎨 Beautiful UI with NvChad themes
-- ⚡ Fast startup with lazy loading
-- 📦 Fully reproducible with Nix
+- 🎨 Beautiful UI based on NvChad
+- 📦 Fully declarative configuration with NixVim and Nix flakes
+- 🚀 Modern UX with [Snacks.nvim](https://github.com/braddero/snacks.nvim) for:
+  - File explorer
+  - Fuzzy finding
+  - Notifications
+  - Image preview (with Kitty terminal support)
+- 💡 LSP support with built-in language servers
+- 📝 Clean, organized keybindings
 
-## Structure
+## Included Plugins
 
-```
-.
-├── flake.nix              # Main flake configuration
-├── modules/               # Nix modules
-│   ├── default.nix        # Main configuration module
-│   ├── mappings.nix       # Empty (keybindings moved to Lua)
-│   ├── options.nix        # Vim options
-│   ├── nvchad.nix         # NvChad-specific configuration
-│   └── core-plugins.nix   # Additional plugins
-└── lua/
-    ├── config/            # Lua configuration files
-    │   ├── nvchad-init.lua   # NvChad initialization
-    │   ├── user-config.lua   # User customizations
-    │   └── keybindings.lua   # Loads all keybindings
-    └── keybinds/          # Modular keybinding files
-        ├── init.lua          # Loads all keybinding modules
-        ├── general.lua       # General operations
-        ├── navigation.lua    # Window/split navigation
-        ├── file-tree.lua     # File explorer keybindings
-        ├── snacks-picker.lua # Snacks picker bindings
-        ├── snacks.lua        # Other Snacks utilities
-        ├── lsp.lua          # LSP keybindings
-        ├── git.lua          # Git operations
-        ├── clipboard.lua     # Clipboard/register ops
-        ├── terminal.lua      # Terminal keybindings
-        ├── tabs.lua         # Tab management
-        └── diagnostics.lua   # Diagnostic keybindings
-```
+- **Core**: NvChad (UI and defaults)
+- **Navigation**: Snacks explorer, picker
+- **Code**: LSP, treesitter, blink.cmp for completion
+- **UI**: Catppuccin theme, indent guides, Snacks notifications
+- **Diagnostics**: Trouble.nvim for structured error display
+- **Utilities**: Terminal, surround operations, image preview
 
-## Usage
+## Installation
 
-### Build and Run
+### Quick Start
 
 ```bash
 # Clone the repository
-git clone <your-repo>
-cd nixvim-nvchad
+git clone https://github.com/yourusername/nixvim-flake
+cd nixvim-flake
 
 # Run directly
 nix run .
 
 # Or build it
-nix build .
-result/bin/nvim
+nix build
+./result/bin/nvim
+```
 
-# Add to your system flake
+### Adding to Your Existing Flake
+
+Add this configuration to your existing Nix flake:
+
+```nix
 {
-  inputs.nixvim-nvchad.url = "github:yourusername/nixvim-nvchad";
-  
-  # In your configuration
-  environment.systemPackages = [
-    inputs.nixvim-nvchad.packages.${system}.default
-  ];
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    
+    # Add this repository as an input
+    nixvim-flake = {
+      url = "github:timbrown5/nixvim-flake/nvchad-base";
+      # Optional: follow the same nixpkgs
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, nixvim-flake, ... }:
+    let
+      system = "x86_64-linux"; # Or your system
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      # NixOS module
+      nixosConfigurations.yourHost = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          # Your existing configuration
+          ({ pkgs, ... }: {
+            environment.systemPackages = [
+              nixvim-flake.packages.${system}.default
+            ];
+          })
+        ];
+      };
+
+      # Home Manager module
+      homeConfigurations.yourUser = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [
+          # Your existing configuration
+          {
+            home.packages = [
+              nixvim-flake.packages.${system}.default
+            ];
+          }
+        ];
+      };
+
+      # Development shell
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = [
+          nixvim-flake.packages.${system}.default
+        ];
+      };
+    };
 }
 ```
 
-### Key Bindings
+## Key Bindings
 
-#### General
+### General
 - `<Space>` - Leader key
 - `<leader>w` - Save file
 - `<leader>q` - Quit
 - `jk` - Exit insert mode (in insert mode)
 - `u` - Undo
-- `<C-r>` or `U` - Redo (capital U is easier to remember!)
+- `<C-r>` or `U` - Redo
 
-#### Clipboard & Registers
-- Default: yanking/deleting uses system clipboard
-- `<leader>d` - Delete without copying to register
-- `<leader>D` - Delete to end of line without copying
-- `x` - Delete character without copying
-- `<leader>p` - Paste from yank register (register 0)
-- `<leader>P` - Paste from yank register before cursor
-- `<leader>y` - Explicitly yank to system clipboard
-- `<leader>Y` - Yank line to system clipboard
+### Navigation
+- `<C-h/j/k/l>` - Navigate between windows
+- `<leader>sv/sh` - Split window vertically/horizontally
+- `<leader>se` - Equal split sizes
+- `<leader>sx` - Close split
 
-#### File Explorer
+### File Explorer
 - `<C-n>` - Toggle file explorer
 - `<leader>e` - Focus file explorer
 
-#### Navigation
-- `<C-h/j/k/l>` - Navigate between windows
-
-#### Finding
+### Picker (Fuzzy Finding)
 - `<leader>ff` - Find files
 - `<leader>fw` - Live grep (search in files)
 - `<leader>fb` - Find buffers
@@ -109,7 +129,7 @@ result/bin/nvim
 - `<leader>fc` - Commands
 - `<leader>fk` - Keymaps
 
-#### LSP
+### LSP
 - `gd` - Go to definition
 - `gr` - Go to references
 - `gi` - Go to implementation
@@ -119,27 +139,30 @@ result/bin/nvim
 - `<leader>rn` - Rename
 - `<leader>f` - Format file
 
-#### Diagnostics
-- `<leader>xx` - Toggle diagnostics
-- `[d` - Previous diagnostic
-- `]d` - Next diagnostic
-- `<leader>d` - Show diagnostic float
+### Clipboard & Registers
+- `<leader>d` - Delete without copying to register
+- `<leader>D` - Delete to end of line without copying
+- `x` - Delete char without copying
+- `<leader>p` - Paste from yank register (register 0)
+- `<leader>P` - Paste from yank register before cursor
+- `<leader>y` - Explicitly yank to system clipboard
+- `<leader>Y` - Yank line to system clipboard
 
-#### Git
-- `<leader>gc` - Git commits
-- `<leader>gb` - Git branches
-- `<leader>gs` - Git status
+### Snacks Utilities
+- `<leader>sn` - Show notification history
+- `<leader>sd` - Dismiss notifications
+- `<leader>st` - Test notification
+- `<leader>si` - Show image preview
+- `<leader>sc` - Show clipboard image
 
-#### Splits & Tabs
-- `<leader>sv` - Split vertically
-- `<leader>sh` - Split horizontally
-- `<leader>se` - Equal split sizes
-- `<leader>sx` - Close split
-- `<leader>to` - New tab
-- `<leader>tx` - Close tab
-
-#### Terminal
+### Terminal
 - `<leader>tt` - Toggle terminal
+- `<Esc><Esc>` - Exit terminal mode
+
+### Tabs
+- `<leader>to` - Open new tab
+- `<leader>tx` - Close current tab
+- `<leader>tn/tp` - Next/previous tab
 
 ## Customization
 
@@ -152,17 +175,6 @@ extraPlugins = with pkgs.vimPlugins; [
   # Add your plugins here
   plugin-name
 ];
-```
-
-### Adding Language Servers
-
-Edit `modules/nvchad.nix`:
-
-```nix
-lsp.servers = {
-  # Add servers here
-  rust_analyzer.enable = true;
-};
 ```
 
 ### Changing Theme
@@ -178,43 +190,28 @@ colorschemes.catppuccin = {
 };
 ```
 
-### Adding Custom Keybindings
+### Adding Keybindings
 
-1. Create a new file in `lua/keybinds/` for your plugin or feature
-2. Add your keybindings using `vim.keymap.set`
-3. Add a `require` statement in `lua/keybinds/init.lua`
+Create a new file in `lua/keybinds/` for your plugin or feature:
 
-Example: `lua/keybinds/my-plugin.lua`
 ```lua
+-- lua/keybinds/my-plugin.lua
 local map = vim.keymap.set
 map('n', '<leader>mp', '<cmd>MyPluginCommand<CR>', { desc = 'My plugin command' })
 ```
 
-### Custom Lua Configuration
+Then add it to `lua/keybinds/init.lua`:
 
-Add your Lua code to `lua/config/user-config.lua`.
-
-## Troubleshooting
-
-1. **Check health**: Run `:checkhealth` in Neovim
-2. **Clear cache**: 
-   ```bash
-   rm -rf ~/.local/share/nvim/nvchad
-   rm -rf ~/.cache/nvim
-   ```
-3. **Update flake**: `nix flake update`
-4. **Check logs**: Look at `:messages` for errors
+```lua
+require('keybinds.my-plugin')
+```
 
 ## Requirements
 
 - Nix with flakes enabled
 - A [Nerd Font](https://www.nerdfonts.com/) for icons
-- Git for some features
+- Kitty terminal (for image preview)
 
 ## License
 
 MIT
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
