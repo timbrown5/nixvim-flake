@@ -140,96 +140,8 @@
     nvim-autopairs.enable = true;
   };
 
-  extraFiles."lua/plugins/which-key-setup.lua".text = ''
-    local status_ok, which_key = pcall(require, "which-key")
-    if not status_ok then
-      return
-    end
-
-    which_key.setup({
-      plugins = {
-        marks = true,
-        registers = true,
-        spelling = {
-          enabled = true,
-          suggestions = 20,
-        },
-        presets = {
-          operators = true,
-          motions = true,
-          text_objects = true,
-          windows = true,
-          nav = true,
-          z = true,
-          g = true,
-        },
-      },
-      operators = {
-        gc = "Comments",
-      },
-      key_labels = {
-        ["<space>"] = "SPC",
-        ["<cr>"] = "RET",
-        ["<tab>"] = "TAB",
-      },
-      popup_mappings = {
-        scroll_down = "<c-d>",
-        scroll_up = "<c-u>",
-      },
-      window = {
-        border = "rounded",
-        position = "bottom",
-        margin = { 1, 0, 1, 0 },
-        padding = { 1, 2, 1, 2 },
-        winblend = 0,
-      },
-      layout = {
-        height = { min = 4, max = 25 },
-        width = { min = 20, max = 50 },
-        spacing = 3,
-        align = "left",
-      },
-      ignore_missing = false,
-      hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ " },
-      show_help = true,
-      show_keys = true,
-      triggers = "auto",
-      triggers_blacklist = {
-        i = { "j", "k" },
-        v = { "j", "k" },
-      },
-      disable = {
-        buftypes = { "terminal", "prompt" },
-        filetypes = { "TelescopePrompt", "lazy" },
-      },
-    })
-
-    local opts = {
-      mode = "n", 
-      prefix = "<leader>",
-      buffer = nil, 
-      silent = true, 
-      noremap = true, 
-      nowait = false,
-    }
-
-    local mappings = {
-      ["f"] = { name = "+find/files" },
-      ["b"] = { name = "+buffer" },
-      ["g"] = { name = "+git" },
-      ["l"] = { name = "+lsp" },
-      ["s"] = { name = "+split & snacks" },
-      ["t"] = { name = "+terminal & tabs" },
-      ["w"] = { name = "+window" },
-      ["c"] = { name = "+code" },
-      ["D"] = { name = "+debug" },
-      ["m"] = { name = "+mini" },
-      ["z"] = { name = "+fold" },
-    }
-
-    which_key.register(mappings, opts)
-  '';
-
+  # Use lua source files from the project
+  extraFiles."lua/plugins/which-key.lua".source = ../lua/plugins/which-key.lua;
   extraFiles."lua/plugins/mini-setup.lua".text = ''
     require('mini.icons').setup({
       use_default_for = {
@@ -248,7 +160,8 @@
   '';
 
   extraConfigLua = lib.mkAfter ''
-    require("plugins.which-key-setup")
+    -- Load our which-key setup first to ensure groups are registered before keys are mapped
+    require("plugins.which-key")
     require("plugins.mini-setup")
   '';
 }

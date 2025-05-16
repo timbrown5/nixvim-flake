@@ -1,5 +1,3 @@
-# Modified version of modules/options.nix with duplicate keybindings removed
-
 { ... }:
 {
   # Global options
@@ -49,7 +47,7 @@
     completeopt = "menuone,noselect";
   };
 
-  # General keybindings
+  # General keybindings - core set that should be available even when fallbacks kick in
   keymaps = [
     # Basic operations
     {
@@ -320,6 +318,4 @@
       options.desc = "Snipe operator";
     }
   ];
-
-  # Better paste override is removed since it's handled in the keybinds/init.lua file
 }

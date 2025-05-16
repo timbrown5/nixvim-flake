@@ -1,100 +1,59 @@
--- SNACKS-SPECIFIC KEYBINDINGS
--- These keybindings are ONLY for Snacks.nvim functionality
--- General keybindings should go in modules/options.nix
-
--- Use the VimEnter event to set up keybindings after all plugins are loaded
-vim.api.nvim_create_autocmd("VimEnter", {
-	callback = function()
-		-- Check if Snacks is available
-		local ok, Snacks = pcall(require, "snacks")
+-- Defer keymaps that depend on functions
+vim.defer_fn(function()
+	local function safe_keymap(mode, key, action, opts)
+		local ok, error = pcall(vim.keymap.set, mode, key, action, opts)
 		if not ok then
-			vim.notify("Snacks plugin not found - keybindings skipped", vim.log.levels.WARN)
-			return
+			vim.notify("Failed to set keymap " .. key .. ": " .. tostring(error), vim.log.levels.ERROR)
+		end
+	end
+
+	-- Smart delete keymaps
+	safe_keymap('n', '<leader>dd', function()
+		if _G.smart_delete then
+			_G.smart_delete('line')
+		end
+	end, { desc = "Delete line without copying" })
+end, 100)
+
+-- DAP keymaps - only set up when DAP is loaded
+vim.api.nvim_create_autocmd("User", {
+	pattern = "DapReady",
+	once = true,
+	callback = function()
+		local function safe_keymap(mode, key, action, opts)
+			local ok, error = pcall(vim.keymap.set, mode, key, action, opts)
+			if not ok then
+				vim.notify("Failed to set keymap " .. key .. ": " .. tostring(error),
+					vim.log.levels.ERROR)
+			end
 		end
 
-		-- Set up keybindings for Snacks
-		-- File explorer
-		vim.keymap.set("n", "<C-n>", "<cmd>Snacks explorer<CR>", { desc = "Toggle file explorer" })
+		safe_keymap('n', '<leader>Db', function()
+			local ok, dap = pcall(require, 'dap')
+			if ok then
+				dap.toggle_breakpoint()
+			end
+		end, { desc = "Toggle breakpoint" })
 
-		-- Picker (fuzzy finding)
-		vim.keymap.set("n", "<leader>ff", "<cmd>Snacks picker.files<CR>", { desc = "Find files" })
-		vim.keymap.set("n", "<leader>fw", "<cmd>Snacks picker.grep<CR>", { desc = "Live grep" })
-		vim.keymap.set("n", "<leader>fb", "<cmd>Snacks picker.buffers<CR>", { desc = "Find buffers" })
-		vim.keymap.set("n", "<leader>fh", "<cmd>Snacks picker.help<CR>", { desc = "Find help" })
-		vim.keymap.set("n", "<leader>fr", "<cmd>Snacks picker.recent_files<CR>", { desc = "Recent files" })
-		vim.keymap.set("n", "<leader>fd", "<cmd>Snacks picker.diagnostics<CR>", { desc = "Diagnostics" })
-		vim.keymap.set("n", "<leader>fs", "<cmd>Snacks picker.symbols<CR>", { desc = "Symbols" })
-		vim.keymap.set("n", "<leader>fc", "<cmd>Snacks picker.commands<CR>", { desc = "Commands" })
-		vim.keymap.set("n", "<leader>fk", "<cmd>Snacks picker.keymaps<CR>", { desc = "Keymaps" })
+		safe_keymap('n', '<leader>Dc', function()
+			local ok, dap = pcall(require, 'dap')
+			if ok then
+				dap.continue()
+			end
+		end, { desc = "Start/Continue debugging" })
 
-		-- Git operations
-		vim.keymap.set("n", "<leader>gc", "<cmd>Snacks picker.git_commits<CR>", { desc = "Git commits" })
-		vim.keymap.set("n", "<leader>gb", "<cmd>Snacks picker.git_branches<CR>", { desc = "Git branches" })
-		vim.keymap.set("n", "<leader>gs", "<cmd>Snacks picker.git_status<CR>", { desc = "Git status" })
+		safe_keymap('n', '<leader>Dj', function()
+			local ok, dap = pcall(require, 'dap')
+			if ok then
+				dap.step_over()
+			end
+		end, { desc = "Step over" })
 
-		-- Notifications
-		vim.keymap.set("n", "<leader>sn", "<cmd>Snacks notifier.show_history<CR>",
-			{ desc = "Show notification history" })
-		vim.keymap.set("n", "<leader>sd", "<cmd>Snacks notifier.dismiss<CR>", { desc = "Dismiss notifications" })
-		vim.keymap.set("n", "<leader>st",
-			function() Snacks.notifier.notify('This is a test notification', 'info') end,
-			{ desc = "Test notification" })
-
-		-- Image preview
-		vim.keymap.set("n", "<leader>si", "<cmd>Snacks image.show_current_file<CR>",
-			{ desc = "Show image preview" })
-		vim.keymap.set("n", "<leader>sc", "<cmd>Snacks image.show_clipboard<CR>",
-			{ desc = "Show clipboard image" })
-
-		-- Terminal additional keybindings
-		-- Note: The main toggle keybinding (<leader>tt) is set in the Nix config,
-		-- but we can add additional keybindings here, like terminal navigation keys
-		vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Terminal normal mode" })
-		vim.keymap.set("t", "<C-h>", "<C-\\><C-n><C-w>h", { desc = "Terminal navigate left" })
-		vim.keymap.set("t", "<C-j>", "<C-\\><C-n><C-w>j", { desc = "Terminal navigate down" })
-		vim.keymap.set("t", "<C-k>", "<C-\\><C-n><C-w>k", { desc = "Terminal navigate up" })
-		vim.keymap.set("t", "<C-l>", "<C-\\><C-n><C-w>l", { desc = "Terminal navigate right" })
-
-		-- LSP-related Snacks picker integrations
-		-- These override the default LSP navigation to use Snacks picker instead
-		vim.keymap.set("n", "gd", function() Snacks.picker.lsp_definitions() end, { desc = "Go to definition" })
-		vim.keymap.set("n", "gr", function() Snacks.picker.lsp_references() end, { desc = "Go to references" })
-		vim.keymap.set("n", "gi", function() Snacks.picker.lsp_implementations() end,
-			{ desc = "Go to implementation" })
-		vim.keymap.set("n", "gt", function() Snacks.picker.lsp_type_definitions() end,
-			{ desc = "Go to type definition" })
-
-		-- Namespaced LSP navigation using Snacks picker
-		vim.keymap.set("n", "<leader>ld", function() Snacks.picker.lsp_definitions() end,
-			{ desc = "LSP: Go to definition" })
-		vim.keymap.set("n", "<leader>lr", function() Snacks.picker.lsp_references() end,
-			{ desc = "LSP: Go to references" })
-		vim.keymap.set("n", "<leader>li", function() Snacks.picker.lsp_implementations() end,
-			{ desc = "LSP: Go to implementation" })
-		vim.keymap.set("n", "<leader>lt", function() Snacks.picker.lsp_type_definitions() end,
-			{ desc = "LSP: Go to type definition" })
-
-		-- Diagnostics with Snacks
-		vim.keymap.set("n", "<leader>dl", function() Snacks.picker.diagnostics() end,
-			{ desc = "Diagnostics: List" })
-
-		-- Register the keymaps with which-key if it's available
-		local wk_ok, wk = pcall(require, "which-key")
-		if wk_ok then
-			wk.register({
-				["<leader>f"] = { name = "Find" },
-				["<leader>g"] = { name = "Git" },
-				["<leader>s"] = { name = "Split & Snacks" },
-				["<leader>t"] = { name = "Terminal & Tabs" },
-				["<leader>l"] = { name = "LSP" },
-				["<leader>d"] = { name = "Diagnostics" },
-				["<leader>b"] = { name = "Buffer" },
-				["<leader>m"] = { name = "Mini" },
-				["<leader>z"] = { name = "Fold" },
-			})
-		end
-
-		vim.notify("Snacks keybindings loaded", vim.log.levels.INFO)
-	end,
-	once = true, -- Only run this once
+		safe_keymap('n', '<leader>Du', function()
+			local ok, dapui = pcall(require, 'dapui')
+			if ok then
+				dapui.toggle()
+			end
+		end, { desc = "Toggle DAP UI" })
+	end
 })
