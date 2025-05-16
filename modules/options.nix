@@ -1,51 +1,52 @@
-{ ... }: {
+{ ... }:
+{
   # Global options
   globalOpts = {
     # Line numbers
     number = true;
     relativenumber = true;
-    
-    # Tabs
+
+    # Tabs - these should be sufficient for 2-space indentation
     tabstop = 2;
     shiftwidth = 2;
     expandtab = true;
     autoindent = true;
-    
+
     # UI
     wrap = false;
     scrolloff = 8;
     sidescrolloff = 8;
     signcolumn = "yes";
-    
+
     # Search
     ignorecase = true;
     smartcase = true;
     hlsearch = true;
-    
+
     # Backup
     swapfile = false;
     backup = false;
     undofile = true;
-    
+
     # Performance
     updatetime = 300;
     timeout = true;
     timeoutlen = 1000;
-    
+
     # Colors
     termguicolors = true;
-    
+
     # Splits
     splitbelow = true;
     splitright = true;
-    
+
     # Mouse
     mouse = "a";
-    
+
     # Completion
     completeopt = "menuone,noselect";
   };
-  
+
   # General keybindings
   keymaps = [
     # Basic operations
@@ -60,6 +61,13 @@
       action = "<cmd>q<CR>";
       mode = "n";
       options.desc = "Quit";
+    }
+    # Format buffer
+    {
+      key = "<leader>fb";
+      action = "<cmd>lua vim.lsp.buf.format({ async = false })<CR>";
+      mode = "n";
+      options.desc = "Format buffer";
     }
     # Better escape
     {
@@ -145,7 +153,7 @@
       mode = "n";
       options.desc = "Previous search result and center";
     }
-    
+
     # Window navigation
     {
       key = "<C-h>";
@@ -171,7 +179,7 @@
       mode = "n";
       options.desc = "Navigate window right";
     }
-    
+
     # Split management
     {
       key = "<leader>sv";
@@ -197,7 +205,7 @@
       mode = "n";
       options.desc = "Close current split";
     }
-    
+
     # Tab operations
     {
       key = "<leader>to";
@@ -229,7 +237,7 @@
       mode = "n";
       options.desc = "Open current buffer in new tab";
     }
-    
+
     # Clipboard operations (using black hole register)
     {
       key = "<leader>d";
@@ -255,7 +263,7 @@
       mode = "n";
       options.desc = "Delete char without yanking";
     }
-    
+
     # Paste from yank register
     {
       key = "<leader>p";
@@ -275,7 +283,7 @@
       mode = "v";
       options.desc = "Paste from yank register";
     }
-    
+
     # System clipboard
     {
       key = "<leader>y";
@@ -295,8 +303,29 @@
       mode = "n";
       options.desc = "Yank line to system clipboard";
     }
+    # Normal mode snipe
+    {
+      key = "s";
+      action = "<cmd>lua require('snipe').snipe()<CR>";
+      mode = "n";
+      options.desc = "Snipe";
+    }
+    {
+      key = "S";
+      action = "<cmd>lua require('snipe').snipe({ backwards = true })<CR>";
+      mode = "n";
+      options.desc = "Snipe backwards";
+    }
+
+    # Operator mode snipe (for commands like 'ds' to delete to a snipe target)
+    {
+      key = "s";
+      action = "<cmd>lua require('snipe').snipe({ operator = true })<CR>";
+      mode = "o";
+      options.desc = "Snipe operator";
+    }
   ];
-  
+
   # Better paste override
   extraConfigLua = ''
     -- Better paste that preserves register in visual mode

@@ -10,12 +10,19 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, nixvim, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixvim,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
         nixvim' = nixvim.legacyPackages.${system};
-        
+
         nvimConfig = nixvim'.makeNixvimWithModule {
           inherit pkgs;
           module = ./modules;
@@ -47,5 +54,6 @@
             '';
           };
         };
-      });
+      }
+    );
 }

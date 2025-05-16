@@ -1,134 +1,254 @@
-{ pkgs, ... }: {
-  # Additional core plugins
+{ pkgs, lib, ... }:
+{
   extraPlugins = with pkgs.vimPlugins; [
-    # UI enhancements
-    indent-blankline-nvim
-    
-    # Better quickfix
-    trouble-nvim
-    
-    # Surround operations
-    vim-surround
-    
-    # Better terminal
-    toggleterm-nvim
+    snipe-nvim
+    mini-nvim
   ];
 
   plugins = {
-    # Icons support (explicitly enable to avoid warnings)
-    web-devicons.enable = true;
-    
-    # Indent guides
-    indent-blankline = {
+    lualine.enable = false;
+
+    gitsigns.enable = true;
+
+    which-key.enable = true;
+
+    treesitter = {
       enable = true;
       settings = {
-        scope = {
-          enabled = true;
-          show_start = true;
-        };
+        indent.enable = true;
+        ensure_installed = [
+          "lua"
+          "vim"
+          "vimdoc"
+          "nix"
+          "markdown"
+          "javascript"
+          "typescript"
+          "python"
+        ];
       };
     };
-    
-    # Trouble for better diagnostics
-    trouble = {
+
+    blink-cmp = {
       enable = true;
-      settings = {
-        auto_close = true;
-      };
-      keymaps = {
-        "<leader>xx" = {
-          action = "toggle";
-          desc = "Toggle diagnostics";
-        };
-        "<leader>xw" = {
-          action = "toggle_workspace_diagnostics";
-          desc = "Workspace diagnostics";
-        };
-        "<leader>xd" = {
-          action = "toggle_document_diagnostics";
-          desc = "Document diagnostics";
-        };
-        "<leader>xq" = {
-          action = "toggle_quickfix";
-          desc = "Quickfix list";
-        };
-      };
     };
-    
-    # Terminal with keybindings
-    toggleterm = {
+
+    lsp = {
       enable = true;
-      settings = {
-        size = 15;
-        open_mapping = "<leader>tt";
-        direction = "float";
-        shade_terminals = true;
-      };
-      # Terminal keybindings
-      keymaps = {
-        # Terminal navigation keys
-        "<C-h>" = {
-          action = "<C-\\><C-n><C-w>h";
-          mode = "t";  # terminal mode
-          desc = "Terminal navigate left";
-        };
-        "<C-j>" = {
-          action = "<C-\\><C-n><C-w>j";
-          mode = "t";
-          desc = "Terminal navigate down";
-        };
-        "<C-k>" = {
-          action = "<C-\\><C-n><C-w>k";
-          mode = "t";
-          desc = "Terminal navigate up";
-        };
-        "<C-l>" = {
-          action = "<C-\\><C-n><C-w>l";
-          mode = "t";
-          desc = "Terminal navigate right";
-        };
-        "<Esc><Esc>" = {
-          action = "<C-\\><C-n>";
-          mode = "t";
-          desc = "Terminal normal mode";
-        };
-      };
-    };
-    
-    # Which key registrations
-    which-key = {
-      enable = true;
-      settings = {
-        delay = 500;
-        plugins = {
-          spelling = {
-            enabled = true;
+      servers = {
+        lua_ls = {
+          enable = true;
+          settings = {
+            Lua = {
+              diagnostics = {
+                globals = [
+                  "vim"
+                  "snipe"
+                ];
+              };
+              workspace = {
+                library = [
+                  "\${third_party}/luassert/library"
+                ];
+              };
+            };
           };
         };
-        window = {
-          border = "rounded";
-        };
+        nil_ls.enable = true;
+        pyright.enable = true;
+        ts_ls.enable = true;
       };
-      registrations = {
-        "<leader>f" = {
-          name = "Find";
+
+      keymaps = {
+        lspBuf = {
+          "K" = {
+            action = "hover";
+            desc = "Hover documentation";
+          };
+
+          "<leader>lh" = {
+            action = "hover";
+            desc = "LSP: Hover documentation";
+          };
+          "<leader>la" = {
+            action = "code_action";
+            desc = "LSP: Code action";
+          };
+          "<leader>ln" = {
+            action = "rename";
+            desc = "LSP: Rename";
+          };
+          "<leader>lf" = {
+            action = "format";
+            desc = "LSP: Format document";
+          };
+          "<leader>ls" = {
+            action = "signature_help";
+            desc = "LSP: Signature help";
+          };
+
+          "<leader>ca" = {
+            action = "code_action";
+            desc = "Code action";
+          };
+          "<leader>rn" = {
+            action = "rename";
+            desc = "Rename";
+          };
+
+          "<leader>lwa" = {
+            action = "add_workspace_folder";
+            desc = "LSP: Add workspace folder";
+          };
+          "<leader>lwr" = {
+            action = "remove_workspace_folder";
+            desc = "LSP: Remove workspace folder";
+          };
         };
-        "<leader>g" = {
-          name = "Git";
-        };
-        "<leader>t" = {
-          name = "Terminal & Tabs";
-        };
-        "<leader>x" = {
-          name = "Diagnostics";
-        };
-        "<leader>c" = {
-          name = "Code";
-        };
-        "<leader>s" = {
-          name = "Split & Snacks";
+
+        diagnostic = {
+          "[d" = {
+            action = "goto_prev";
+            desc = "Previous diagnostic";
+          };
+          "]d" = {
+            action = "goto_next";
+            desc = "Next diagnostic";
+          };
+
+          "<leader>dp" = {
+            action = "goto_prev";
+            desc = "Diagnostics: Previous";
+          };
+          "<leader>dn" = {
+            action = "goto_next";
+            desc = "Diagnostics: Next";
+          };
+          "<leader>df" = {
+            action = "open_float";
+            desc = "Diagnostics: Float";
+          };
+          "<leader>dq" = {
+            action = "setloclist";
+            desc = "Diagnostics: To quickfix";
+          };
         };
       };
     };
+
+    comment.enable = true;
+    nvim-autopairs.enable = true;
   };
+
+  extraFiles."lua/plugins/which-key-setup.lua".text = ''
+    local status_ok, which_key = pcall(require, "which-key")
+    if not status_ok then
+      return
+    end
+
+    which_key.setup({
+      plugins = {
+        marks = true,
+        registers = true,
+        spelling = {
+          enabled = true,
+          suggestions = 20,
+        },
+        presets = {
+          operators = true,
+          motions = true,
+          text_objects = true,
+          windows = true,
+          nav = true,
+          z = true,
+          g = true,
+        },
+      },
+      operators = {
+        gc = "Comments",
+      },
+      key_labels = {
+        ["<space>"] = "SPC",
+        ["<cr>"] = "RET",
+        ["<tab>"] = "TAB",
+      },
+      popup_mappings = {
+        scroll_down = "<c-d>",
+        scroll_up = "<c-u>",
+      },
+      window = {
+        border = "rounded",
+        position = "bottom",
+        margin = { 1, 0, 1, 0 },
+        padding = { 1, 2, 1, 2 },
+        winblend = 0,
+      },
+      layout = {
+        height = { min = 4, max = 25 },
+        width = { min = 20, max = 50 },
+        spacing = 3,
+        align = "left",
+      },
+      ignore_missing = false,
+      hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ " },
+      show_help = true,
+      show_keys = true,
+      triggers = "auto",
+      triggers_blacklist = {
+        i = { "j", "k" },
+        v = { "j", "k" },
+      },
+      disable = {
+        buftypes = { "terminal", "prompt" },
+        filetypes = { "TelescopePrompt", "lazy" },
+      },
+    })
+
+    local opts = {
+      mode = "n", 
+      prefix = "<leader>",
+      buffer = nil, 
+      silent = true, 
+      noremap = true, 
+      nowait = false,
+    }
+
+    local mappings = {
+      ["f"] = { name = "+find/files" },
+      ["b"] = { name = "+buffer" },
+      ["g"] = { name = "+git" },
+      ["l"] = { name = "+lsp" },
+      ["s"] = { name = "+split & snacks" },
+      ["t"] = { name = "+terminal & tabs" },
+      ["w"] = { name = "+window" },
+      ["c"] = { name = "+code" },
+      ["D"] = { name = "+debug" },
+      ["m"] = { name = "+mini" },
+      ["z"] = { name = "+fold" },
+    }
+
+    which_key.register(mappings, opts)
+  '';
+
+  extraFiles."lua/plugins/mini-setup.lua".text = ''
+    require('mini.icons').setup({
+      use_default_for = {
+        'kind',
+        'diagnostic',
+        'git',
+        'ui',
+      },
+
+      lsp = {
+        kind = {
+          enabled = true,
+        },
+      },
+    })
+  '';
+
+  extraConfigLua = lib.mkAfter ''
+    require("plugins.which-key-setup")
+    require("plugins.mini-setup")
+  '';
 }
