@@ -1,3 +1,5 @@
+# Modified version of modules/options.nix with duplicate keybindings removed
+
 { ... }:
 {
   # Global options
@@ -61,13 +63,6 @@
       action = "<cmd>q<CR>";
       mode = "n";
       options.desc = "Quit";
-    }
-    # Format buffer
-    {
-      key = "<leader>fb";
-      action = "<cmd>lua vim.lsp.buf.format({ async = false })<CR>";
-      mode = "n";
-      options.desc = "Format buffer";
     }
     # Better escape
     {
@@ -326,15 +321,5 @@
     }
   ];
 
-  # Better paste override
-  extraConfigLua = ''
-    -- Better paste that preserves register in visual mode
-    vim.keymap.set('v', 'p', function()
-      if vim.bo.modifiable then
-        vim.cmd([["_dP]])
-      else
-        vim.notify("Cannot paste: buffer is not modifiable", vim.log.levels.WARN)
-      end
-    end, { desc = 'Paste without yanking' })
-  '';
+  # Better paste override is removed since it's handled in the keybinds/init.lua file
 }

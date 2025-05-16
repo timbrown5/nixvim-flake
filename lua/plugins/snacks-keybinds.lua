@@ -1,7 +1,6 @@
--- This file exists because the NixVim module for Snacks.nvim doesn't support
--- the keymaps configuration option. While all other Snacks configuration
--- is handled through the declarative NixVim interface, keybindings need
--- to be set up separately in Lua.
+-- SNACKS-SPECIFIC KEYBINDINGS
+-- These keybindings are ONLY for Snacks.nvim functionality
+-- General keybindings should go in modules/options.nix
 
 -- Use the VimEnter event to set up keybindings after all plugins are loaded
 vim.api.nvim_create_autocmd("VimEnter", {
@@ -57,7 +56,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 		vim.keymap.set("t", "<C-l>", "<C-\\><C-n><C-w>l", { desc = "Terminal navigate right" })
 
 		-- LSP-related Snacks picker integrations
-		-- Traditional Vim-style navigation using Snacks picker
+		-- These override the default LSP navigation to use Snacks picker instead
 		vim.keymap.set("n", "gd", function() Snacks.picker.lsp_definitions() end, { desc = "Go to definition" })
 		vim.keymap.set("n", "gr", function() Snacks.picker.lsp_references() end, { desc = "Go to references" })
 		vim.keymap.set("n", "gi", function() Snacks.picker.lsp_implementations() end,
