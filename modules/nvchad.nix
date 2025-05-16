@@ -109,6 +109,94 @@
           };
         };
       };
+      # Add Snacks keybindings
+      keymaps = {
+        # File explorer
+        "<C-n>" = {
+          action = "explorer.toggle";
+          desc = "Toggle file explorer";
+        };
+        "<leader>e" = {
+          action = "explorer.focus";
+          desc = "Focus file explorer";
+        };
+        
+        # Picker (fuzzy finding)
+        "<leader>ff" = {
+          action = "picker.files";
+          desc = "Find files";
+        };
+        "<leader>fw" = {
+          action = "picker.grep";
+          desc = "Live grep"; 
+        };
+        "<leader>fb" = {
+          action = "picker.buffers";
+          desc = "Find buffers";
+        };
+        "<leader>fh" = {
+          action = "picker.help";
+          desc = "Find help";
+        };
+        "<leader>fr" = {
+          action = "picker.recent_files";
+          desc = "Recent files";
+        };
+        "<leader>fd" = {
+          action = "picker.diagnostics";
+          desc = "Diagnostics";
+        };
+        "<leader>fs" = {
+          action = "picker.symbols";
+          desc = "Symbols";
+        };
+        "<leader>fc" = {
+          action = "picker.commands";
+          desc = "Commands";
+        };
+        "<leader>fk" = {
+          action = "picker.keymaps";
+          desc = "Keymaps";
+        };
+        
+        # Git operations
+        "<leader>gc" = {
+          action = "picker.git_commits";
+          desc = "Git commits";
+        };
+        "<leader>gb" = {
+          action = "picker.git_branches";
+          desc = "Git branches";
+        };
+        "<leader>gs" = {
+          action = "picker.git_status";
+          desc = "Git status";
+        };
+        
+        # Notifications
+        "<leader>sn" = {
+          action = "notifier.show_history";
+          desc = "Show notification history";
+        };
+        "<leader>sd" = {
+          action = "notifier.dismiss";
+          desc = "Dismiss notifications";
+        };
+        "<leader>st" = {
+          action = "notifier.notify('This is a test notification', 'info')";
+          desc = "Test notification";
+        };
+        
+        # Image preview
+        "<leader>si" = {
+          action = "image.show_current_file";
+          desc = "Show image preview";
+        };
+        "<leader>sc" = {
+          action = "image.show_clipboard";
+          desc = "Show clipboard image";
+        };
+      };
     };
     
     # Git integration  
@@ -137,7 +225,7 @@
       enable = true;
     };
     
-    # LSP configuration
+    # LSP configuration with keybindings
     lsp = {
       enable = true;
       servers = {
@@ -160,6 +248,61 @@
         pyright.enable = true;
         ts_ls.enable = true;
       };
+      # Add LSP keybindings
+      keymaps = {
+        lspBuf = {
+          # LSP buffer operations using Snacks picker
+          "gd" = {
+            lua = "Snacks.picker.lsp_definitions()";
+            desc = "Go to definition";
+          };
+          "gr" = {
+            lua = "Snacks.picker.lsp_references()";
+            desc = "Go to references";
+          };
+          "gi" = {
+            lua = "Snacks.picker.lsp_implementations()";
+            desc = "Go to implementation";
+          };
+          "gt" = {
+            lua = "Snacks.picker.lsp_type_definitions()";
+            desc = "Go to type definition";
+          };
+          
+          # Standard LSP operations
+          "K" = {
+            action = "hover";
+            desc = "Hover documentation";
+          };
+          "<leader>ca" = {
+            action = "code_action";
+            desc = "Code action";
+          };
+          "<leader>rn" = {
+            action = "rename";
+            desc = "Rename";
+          };
+          "<leader>f" = {
+            action = "format";
+            desc = "Format document";
+          };
+        };
+        diagnostic = {
+          # Diagnostic navigation
+          "[d" = {
+            action = "goto_prev";
+            desc = "Previous diagnostic";
+          };
+          "]d" = {
+            action = "goto_next";
+            desc = "Next diagnostic";
+          };
+          "<leader>df" = {
+            action = "open_float";
+            desc = "Show diagnostic float";
+          };
+        };
+      };
     };
     
     # Comments
@@ -167,13 +310,5 @@
     
     # Auto pairs
     nvim-autopairs.enable = true;
-    
-    # Which key
-    which-key = {
-      enable = true;
-      settings = {
-        delay = 500;
-      };
-    };
   };
 }
