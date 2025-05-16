@@ -10,6 +10,7 @@
     
     # Utilities
     snacks-nvim
+    snipe-nvim
     
     # Dependencies that NvChad expects
     plenary-nvim

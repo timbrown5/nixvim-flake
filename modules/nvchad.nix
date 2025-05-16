@@ -1,51 +1,23 @@
 { pkgs, ... }: {
-  # NvChad configuration
-  extraPlugins = with pkgs.vimPlugins; [
-    # Core NvChad packages
-    nvchad
-    nvchad-ui
-    
-    # Theme
-    catppuccin-nvim
-    
-    # Utilities
-    snacks-nvim
-    
-    # Dependencies that NvChad expects
-    plenary-nvim
-    nvim-web-devicons
-  ];
-
-  # Ensure NvChad is loaded properly
   extraConfigVim = ''
-    " Set runtimepath for NvChad
     set runtimepath^=${pkgs.vimPlugins.nvchad}
     set runtimepath^=${pkgs.vimPlugins.nvchad-ui}
   '';
   
-  # Pre-configuration to ensure NvChad directories exist
   extraConfigLuaPre = ''
-    -- Create necessary directories for NvChad (using official path style)
     local data_dir = vim.fn.stdpath("data")
-    
-    -- Set global variables for NvChad
     vim.g.base46_cache = data_dir .. "/nvchad/base46/"
     vim.g.nvchad_theme = "catppuccin"
-    
-    -- Create required directories
     vim.fn.mkdir(data_dir .. "/nvchad/base46", "p")
   '';
 
-  # Theme configuration - comprehensive Catppuccin setup
   colorschemes.catppuccin = {
     enable = true;
     settings = {
-      # Base theme settings
       flavour = "macchiato";
       transparent_background = true;
       no_italic = false;
       
-      # Italic styling for syntax elements
       styles = {
         comments = [ "italic" ];
         conditionals = [ "italic" ];
@@ -61,13 +33,11 @@
         operators = [ "italic" ];
       };
       
-      # Inactive window transparency (90% opacity)
       dim_inactive = {
         enabled = true;
         percentage = 0.1;
       };
       
-      # Plugin integrations
       integrations = {
         nvimtree = true;
         telescope = true;
@@ -99,14 +69,9 @@
     };
   };
 
-  # UI components that work with NvChad
   plugins = {
-    # Status line (NvChad uses its own statusline)
     lualine.enable = false;
     
-    # Snacks.nvim - using NixVim's declarative config for everything except keymaps
-    # Note: Keymaps are configured via Lua (lua/plugins/snacks-keybinds.lua) because
-    # the NixVim module doesn't support the keymaps option.
     snacks = {
       enable = true;
       settings = {
@@ -127,40 +92,38 @@
         
         indent = {
           enabled = true;
-          scope = true;                   # Show scope guides
-          char = "│";                     # Character for indent lines
+          scope = true;
+          char = "│";
           exclude_filetypes = ["help" "dashboard" "lazy" "mason" "notify"];
           highlight = [
-            "CatppuccinaSubtext0"       # Base indent color from Catppuccin palette
-            "CatppuccinaBlue"           # Contextual indentation color for scope
+            "CatppuccinaSubtext0"
+            "CatppuccinaBlue"
           ];
-          smart_indent = true;            # Smarter indentation rules
-          scope_start = true;             # Show line at scope start
-          line_num = false;               # Don't show on line number column
+          smart_indent = true;
+          scope_start = true;
+          line_num = false;
         };
         
-        # Using Snacks.terminal instead of toggleterm
         terminal = {
           enabled = true;
-          direction = "float";            # Floating terminal window
-          shell = "bash";                 # Default shell
+          direction = "float";
+          shell = "bash";
           size = {
-            width = 0.8;                  # 80% of window width
-            height = 0.8;                 # 80% of window height 
+            width = 0.8;
+            height = 0.8;
           };
-          border = "rounded";             # Border style
+          border = "rounded";
           mappings = {
-            toggle = "<leader>tt";        # Toggle terminal
+            toggle = "<leader>tt";
           };
         };
         
-        # Image rendering support
         image = {
           enabled = true;
-          backend = "kitty";  # Using kitty graphics protocol
-          max_width = 100;    # Maximum width as percentage of window
-          max_height = 25;    # Maximum height as percentage of window
-          window = "float";   # Show images in floating window
+          backend = "kitty";
+          max_width = 100;
+          max_height = 25;
+          window = "float";
         };
         explorer = {
           enabled = true;
@@ -190,10 +153,8 @@
       };
     };
     
-    # Git integration  
     gitsigns.enable = true;
     
-    # Syntax highlighting
     treesitter = {
       enable = true;
       settings = {
@@ -211,12 +172,10 @@
       };
     };
     
-    # Completion (using blink.cmp as it's more modern)
     blink-cmp = {
       enable = true;
     };
     
-    # LSP configuration with keybindings - MOVED Snacks integrations to Lua file
     lsp = {
       enable = true;
       servers = {
@@ -225,7 +184,7 @@
           settings = {
             Lua = {
               diagnostics = {
-                globals = [ "vim" ];
+                globals = [ "vim" "snipe" ];
               };
               workspace = {
                 library = [
@@ -242,13 +201,11 @@
       
       keymaps = {
         lspBuf = {
-          # Standard hover shortcut
           "K" = {
             action = "hover";
             desc = "Hover documentation";
           };
           
-          # Basic LSP commands
           "<leader>lh" = {
             action = "hover";
             desc = "LSP: Hover documentation";
@@ -270,7 +227,6 @@
             desc = "LSP: Signature help";
           };
           
-          # Legacy bindings
           "<leader>ca" = {
             action = "code_action";
             desc = "Code action";
@@ -280,7 +236,6 @@
             desc = "Rename";
           };
           
-          # Workspace folder management
           "<leader>lwa" = {
             action = "add_workspace_folder";
             desc = "LSP: Add workspace folder";
@@ -291,9 +246,7 @@
           };
         };
         
-        # Standard diagnostic navigation
         diagnostic = {
-          # Keep traditional next/prev diagnostics
           "[d" = {
             action = "goto_prev";
             desc = "Previous diagnostic";
@@ -303,7 +256,6 @@
             desc = "Next diagnostic";
           };
           
-          # Add namespaced versions
           "<leader>dp" = {
             action = "goto_prev";
             desc = "Diagnostics: Previous";
@@ -324,20 +276,14 @@
       };
     };
     
-    # Comments
     comment.enable = true;
-    
-    # Auto pairs
     nvim-autopairs.enable = true;
   };
   
-  # Add specific treesitter highlight settings not covered by Catppuccin
   extraConfigLua = ''
-    -- Add specific treesitter highlight settings that aren't covered by Catppuccin config
     vim.api.nvim_create_autocmd("ColorScheme", {
       pattern = "*",
       callback = function()
-        -- Additional syntax elements that benefit from italics
         vim.api.nvim_set_hl(0, "@parameter", { italic = true })
         vim.api.nvim_set_hl(0, "@attribute", { italic = true })
         vim.api.nvim_set_hl(0, "@variable.builtin", { italic = true })
@@ -347,21 +293,17 @@
         vim.api.nvim_set_hl(0, "@type.definition", { italic = true })
         vim.api.nvim_set_hl(0, "@type.qualifier", { italic = true })
         
-        -- Line number colors using Catppuccin's palette
-        -- Get Catppuccin highlights for regular line numbers
         local colors = require("catppuccin.palettes").get_palette()
         vim.api.nvim_set_hl(0, "LineNr", { 
-          fg = colors.blue,  -- Using Catppuccin's blue
+          fg = colors.blue,
           bold = true 
         })
         
-        -- Current line number with a more standout color
         vim.api.nvim_set_hl(0, "CursorLineNr", { 
-          fg = colors.yellow,  -- Using Catppuccin's yellow
+          fg = colors.yellow,
           bold = true 
         })
         
-        -- Keep SignColumn transparent
         vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
       end
     })
