@@ -5,7 +5,7 @@
     number = true;
     relativenumber = true;
     
-    # Tabs
+    # Tabs - these should be sufficient for 2-space indentation
     tabstop = 2;
     shiftwidth = 2;
     expandtab = true;
@@ -60,6 +60,13 @@
       action = "<cmd>q<CR>";
       mode = "n";
       options.desc = "Quit";
+    }
+    # Format buffer
+    {
+      key = "<leader>fb";
+      action = "<cmd>lua vim.lsp.buf.format({ async = false })<CR>";
+      mode = "n";
+      options.desc = "Format buffer";
     }
     # Better escape
     {
@@ -295,6 +302,27 @@
       mode = "n";
       options.desc = "Yank line to system clipboard";
     }
+		# Normal mode snipe
+{
+  key = "s";
+  action = "<cmd>lua require('snipe').snipe()<CR>";
+  mode = "n";
+  options.desc = "Snipe";
+}
+{
+  key = "S";
+  action = "<cmd>lua require('snipe').snipe({ backwards = true })<CR>";
+  mode = "n";
+  options.desc = "Snipe backwards";
+}
+
+# Operator mode snipe (for commands like 'ds' to delete to a snipe target)
+{
+  key = "s";
+  action = "<cmd>lua require('snipe').snipe({ operator = true })<CR>";
+  mode = "o";
+  options.desc = "Snipe operator";
+}
   ];
   
   # Better paste override
@@ -309,3 +337,4 @@
     end, { desc = 'Paste without yanking' })
   '';
 }
+

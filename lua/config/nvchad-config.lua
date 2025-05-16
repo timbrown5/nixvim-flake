@@ -23,8 +23,3 @@ end)
 
 -- Load user configurations
 require("config.user-config")
-
--- Load keybindings
-vim.schedule(function()
-	require("config.keybindings")
-end)

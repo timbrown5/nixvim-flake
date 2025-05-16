@@ -46,6 +46,7 @@
       "lua/config/nvchad-config.lua".source = ../lua/config/nvchad-config.lua;
       "lua/config/user-config.lua".source = ../lua/config/user-config.lua;
       "lua/config/fallback.lua".source = ../lua/config/fallback.lua;
+      "lua/plugins/snacks-keybinds.lua".source = ../lua/plugins/snacks-keybinds.lua;  # Updated filename
     };
     
     # Load our Lua configurations in the right order
@@ -57,6 +58,9 @@
       require('config.nvchad-config')
       require('config.fallback')
       require('config.user-config')
+      
+      -- Load plugin configurations
+      require('plugins.snacks-keybinds')
     '';
   };
 }

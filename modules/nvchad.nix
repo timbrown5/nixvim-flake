@@ -36,18 +36,65 @@
     vim.fn.mkdir(data_dir .. "/nvchad/base46", "p")
   '';
 
-  # Theme configuration - using catppuccin
+  # Theme configuration - comprehensive Catppuccin setup
   colorschemes.catppuccin = {
     enable = true;
     settings = {
+      # Base theme settings
       flavour = "macchiato";
-      transparent_background = false;
+      transparent_background = true;
+      no_italic = false;
+      
+      # Italic styling for syntax elements
+      styles = {
+        comments = [ "italic" ];
+        conditionals = [ "italic" ];
+        loops = [ "italic" ];
+        functions = [ "italic" ];
+        keywords = [ "italic" ];
+        strings = [ ];
+        variables = [ ];
+        numbers = [ ];
+        booleans = [ ];
+        properties = [ ];
+        types = [ "italic" ];
+        operators = [ "italic" ];
+      };
+      
+      # Inactive window transparency (90% opacity)
+      dim_inactive = {
+        enabled = true;
+        percentage = 0.1;
+      };
+      
+      # Plugin integrations
       integrations = {
         nvimtree = true;
         telescope = true;
         treesitter = true;
         gitsigns = true;
         which_key = true;
+        native_lsp = {
+          enabled = true;
+          virtual_text = {
+            errors = [ "italic" ];
+            hints = [ "italic" ];
+            warnings = [ "italic" ];
+            information = [ "italic" ];
+          };
+          underlines = {
+            errors = [ "underline" ];
+            hints = [ "underline" ];
+            warnings = [ "underline" ];
+            information = [ "underline" ];
+          };
+        };
+        cmp = true;
+        dap = {
+          enabled = true;
+          enable_ui = true;
+        };
+        notify = true;
       };
     };
   };
@@ -57,7 +104,9 @@
     # Status line (NvChad uses its own statusline)
     lualine.enable = false;
     
-    # Snacks.nvim for utilities including explorer and picker
+    # Snacks.nvim - using NixVim's declarative config for everything except keymaps
+    # Note: Keymaps are configured via Lua (lua/plugins/snacks-keybinds.lua) because
+    # the NixVim module doesn't support the keymaps option.
     snacks = {
       enable = true;
       settings = {
@@ -75,6 +124,36 @@
           };
         };
         quickfile.enabled = true;
+        
+        indent = {
+          enabled = true;
+          scope = true;                   # Show scope guides
+          char = "│";                     # Character for indent lines
+          exclude_filetypes = ["help" "dashboard" "lazy" "mason" "notify"];
+          highlight = [
+            "CatppuccinaSubtext0"       # Base indent color from Catppuccin palette
+            "CatppuccinaBlue"           # Contextual indentation color for scope
+          ];
+          smart_indent = true;            # Smarter indentation rules
+          scope_start = true;             # Show line at scope start
+          line_num = false;               # Don't show on line number column
+        };
+        
+        # Using Snacks.terminal instead of toggleterm
+        terminal = {
+          enabled = true;
+          direction = "float";            # Floating terminal window
+          shell = "bash";                 # Default shell
+          size = {
+            width = 0.8;                  # 80% of window width
+            height = 0.8;                 # 80% of window height 
+          };
+          border = "rounded";             # Border style
+          mappings = {
+            toggle = "<leader>tt";        # Toggle terminal
+          };
+        };
+        
         # Image rendering support
         image = {
           enabled = true;
@@ -109,94 +188,6 @@
           };
         };
       };
-      # Add Snacks keybindings
-      keymaps = {
-        # File explorer
-        "<C-n>" = {
-          action = "explorer.toggle";
-          desc = "Toggle file explorer";
-        };
-        "<leader>e" = {
-          action = "explorer.focus";
-          desc = "Focus file explorer";
-        };
-        
-        # Picker (fuzzy finding)
-        "<leader>ff" = {
-          action = "picker.files";
-          desc = "Find files";
-        };
-        "<leader>fw" = {
-          action = "picker.grep";
-          desc = "Live grep"; 
-        };
-        "<leader>fb" = {
-          action = "picker.buffers";
-          desc = "Find buffers";
-        };
-        "<leader>fh" = {
-          action = "picker.help";
-          desc = "Find help";
-        };
-        "<leader>fr" = {
-          action = "picker.recent_files";
-          desc = "Recent files";
-        };
-        "<leader>fd" = {
-          action = "picker.diagnostics";
-          desc = "Diagnostics";
-        };
-        "<leader>fs" = {
-          action = "picker.symbols";
-          desc = "Symbols";
-        };
-        "<leader>fc" = {
-          action = "picker.commands";
-          desc = "Commands";
-        };
-        "<leader>fk" = {
-          action = "picker.keymaps";
-          desc = "Keymaps";
-        };
-        
-        # Git operations
-        "<leader>gc" = {
-          action = "picker.git_commits";
-          desc = "Git commits";
-        };
-        "<leader>gb" = {
-          action = "picker.git_branches";
-          desc = "Git branches";
-        };
-        "<leader>gs" = {
-          action = "picker.git_status";
-          desc = "Git status";
-        };
-        
-        # Notifications
-        "<leader>sn" = {
-          action = "notifier.show_history";
-          desc = "Show notification history";
-        };
-        "<leader>sd" = {
-          action = "notifier.dismiss";
-          desc = "Dismiss notifications";
-        };
-        "<leader>st" = {
-          action = "notifier.notify('This is a test notification', 'info')";
-          desc = "Test notification";
-        };
-        
-        # Image preview
-        "<leader>si" = {
-          action = "image.show_current_file";
-          desc = "Show image preview";
-        };
-        "<leader>sc" = {
-          action = "image.show_clipboard";
-          desc = "Show clipboard image";
-        };
-      };
     };
     
     # Git integration  
@@ -225,7 +216,7 @@
       enable = true;
     };
     
-    # LSP configuration with keybindings
+    # LSP configuration with keybindings - MOVED Snacks integrations to Lua file
     lsp = {
       enable = true;
       servers = {
@@ -248,32 +239,38 @@
         pyright.enable = true;
         ts_ls.enable = true;
       };
-      # Add LSP keybindings
+      
       keymaps = {
         lspBuf = {
-          # LSP buffer operations using Snacks picker
-          "gd" = {
-            lua = "Snacks.picker.lsp_definitions()";
-            desc = "Go to definition";
-          };
-          "gr" = {
-            lua = "Snacks.picker.lsp_references()";
-            desc = "Go to references";
-          };
-          "gi" = {
-            lua = "Snacks.picker.lsp_implementations()";
-            desc = "Go to implementation";
-          };
-          "gt" = {
-            lua = "Snacks.picker.lsp_type_definitions()";
-            desc = "Go to type definition";
-          };
-          
-          # Standard LSP operations
+          # Standard hover shortcut
           "K" = {
             action = "hover";
             desc = "Hover documentation";
           };
+          
+          # Basic LSP commands
+          "<leader>lh" = {
+            action = "hover";
+            desc = "LSP: Hover documentation";
+          };
+          "<leader>la" = {
+            action = "code_action";
+            desc = "LSP: Code action";
+          };
+          "<leader>ln" = {
+            action = "rename";
+            desc = "LSP: Rename";
+          };
+          "<leader>lf" = {
+            action = "format";
+            desc = "LSP: Format document";
+          };
+          "<leader>ls" = {
+            action = "signature_help";
+            desc = "LSP: Signature help";
+          };
+          
+          # Legacy bindings
           "<leader>ca" = {
             action = "code_action";
             desc = "Code action";
@@ -282,13 +279,21 @@
             action = "rename";
             desc = "Rename";
           };
-          "<leader>f" = {
-            action = "format";
-            desc = "Format document";
+          
+          # Workspace folder management
+          "<leader>lwa" = {
+            action = "add_workspace_folder";
+            desc = "LSP: Add workspace folder";
+          };
+          "<leader>lwr" = {
+            action = "remove_workspace_folder";
+            desc = "LSP: Remove workspace folder";
           };
         };
+        
+        # Standard diagnostic navigation
         diagnostic = {
-          # Diagnostic navigation
+          # Keep traditional next/prev diagnostics
           "[d" = {
             action = "goto_prev";
             desc = "Previous diagnostic";
@@ -297,9 +302,23 @@
             action = "goto_next";
             desc = "Next diagnostic";
           };
+          
+          # Add namespaced versions
+          "<leader>dp" = {
+            action = "goto_prev";
+            desc = "Diagnostics: Previous";
+          };
+          "<leader>dn" = {
+            action = "goto_next";
+            desc = "Diagnostics: Next";
+          };
           "<leader>df" = {
             action = "open_float";
-            desc = "Show diagnostic float";
+            desc = "Diagnostics: Float";
+          };
+          "<leader>dq" = {
+            action = "setloclist";
+            desc = "Diagnostics: To quickfix";
           };
         };
       };
@@ -311,4 +330,40 @@
     # Auto pairs
     nvim-autopairs.enable = true;
   };
+  
+  # Add specific treesitter highlight settings not covered by Catppuccin
+  extraConfigLua = ''
+    -- Add specific treesitter highlight settings that aren't covered by Catppuccin config
+    vim.api.nvim_create_autocmd("ColorScheme", {
+      pattern = "*",
+      callback = function()
+        -- Additional syntax elements that benefit from italics
+        vim.api.nvim_set_hl(0, "@parameter", { italic = true })
+        vim.api.nvim_set_hl(0, "@attribute", { italic = true })
+        vim.api.nvim_set_hl(0, "@variable.builtin", { italic = true })
+        vim.api.nvim_set_hl(0, "@keyword.function", { italic = true })
+        vim.api.nvim_set_hl(0, "@keyword.return", { italic = true })
+        vim.api.nvim_set_hl(0, "@type.builtin", { italic = true })
+        vim.api.nvim_set_hl(0, "@type.definition", { italic = true })
+        vim.api.nvim_set_hl(0, "@type.qualifier", { italic = true })
+        
+        -- Line number colors using Catppuccin's palette
+        -- Get Catppuccin highlights for regular line numbers
+        local colors = require("catppuccin.palettes").get_palette()
+        vim.api.nvim_set_hl(0, "LineNr", { 
+          fg = colors.blue,  -- Using Catppuccin's blue
+          bold = true 
+        })
+        
+        -- Current line number with a more standout color
+        vim.api.nvim_set_hl(0, "CursorLineNr", { 
+          fg = colors.yellow,  -- Using Catppuccin's yellow
+          bold = true 
+        })
+        
+        -- Keep SignColumn transparent
+        vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
+      end
+    })
+  '';
 }
