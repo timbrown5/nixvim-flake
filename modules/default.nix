@@ -2,13 +2,12 @@
 {
   imports = [
     ./nvchad.nix
-    ./options.nix
     ./core-plugins.nix
-    ./snacks.nix # Added the new Snacks module
+    ./snacks.nix
+    ./options.nix
   ];
 
   config = {
-    # Enable the NvChad and Snacks modules
     nvchad.enable = true;
     customPlugins.snacks.enable = true;
 
@@ -52,7 +51,7 @@
       require('config.user-config')
 
       require('utils.smart_delete')
-      require('keybinds').setup()  -- Load and initialize main keybinds
+      require('keybinds').setup()
       require('plugins.snipe')
       require('keybinds.deferred')
     '';

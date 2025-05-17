@@ -58,7 +58,7 @@ in
           ];
           smart_indent = true;
           scope_start = true;
-          line_num = false;
+          line_num = true;
         };
 
         terminal = {

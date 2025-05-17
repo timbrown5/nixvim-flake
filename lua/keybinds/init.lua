@@ -4,19 +4,16 @@
 
 -- Helper function for easier keymapping
 local function map(mode, lhs, rhs, opts)
-	local options = { noremap = true, silent = true }
-	if opts then
-		options = vim.tbl_extend("force", options, opts)
-	end
-	vim.keymap.set(mode, lhs, rhs, options)
+  local options = { noremap = true, silent = true }
+  if opts then
+    options = vim.tbl_extend("force", options, opts)
+  end
+  vim.keymap.set(mode, lhs, rhs, options)
 end
 
--- Leader key
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
 -- Better paste
-map("v", "p", "\"_dP", { desc = "Paste without yanking" })
+map("v", "P", "\"_dP", { desc = "Paste without yanking" })
+map("v", "D", "\"_d", { desc = "Delete without yanking" })
 
 -- Center cursor after jumps
 map("n", "<C-d>", "<C-d>zz", { desc = "Jump down and center" })
@@ -27,13 +24,13 @@ map("n", "N", "Nzzzv", { desc = "Previous search result and center" })
 -- Load deferred keybindings if available
 local ok, deferred = pcall(require, "keybinds.deferred")
 if not ok then
-	vim.notify("Deferred keybindings not loaded in fallback mode", vim.log.levels.INFO)
+  vim.notify("Deferred keybindings not loaded in fallback mode", vim.log.levels.INFO)
 end
 
 -- Return the module
 return {
-	-- We can add functions or variables here if needed
-	setup = function()
-		vim.notify("Basic keybindings loaded successfully", vim.log.levels.INFO)
-	end
+  -- We can add functions or variables here if needed
+  setup = function()
+    vim.notify("Basic keybindings loaded successfully", vim.log.levels.INFO)
+  end
 }

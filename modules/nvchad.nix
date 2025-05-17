@@ -42,14 +42,14 @@ in
 
         styles = {
           comments = [ "italic" ];
-          conditionals = [ "italic" ];
-          loops = [ "italic" ];
-          functions = [ "italic" ];
+          conditionals = [ ];
+          loops = [ ];
+          functions = [ ];
           keywords = [ "italic" ];
-          strings = [ ];
-          variables = [ ];
+          strings = [ "italic" ];
+          variables = [ "italic" ];
           numbers = [ ];
-          booleans = [ ];
+          booleans = [ "italic" ];
           properties = [ ];
           types = [ "italic" ];
           operators = [ "italic" ];
