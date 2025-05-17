@@ -323,6 +323,38 @@ with lib;
         mode = "o";
         options.desc = "Snipe operator";
       }
+
+      # Buffer operations
+      {
+        key = "<leader>bf";
+        action = "<cmd>lua vim.lsp.buf.format()<CR>";
+        mode = "n";
+        options.desc = "Format buffer";
+      }
+      {
+        key = "<leader>bp";
+        action = "ggVG\"+p";
+        mode = "n";
+        options.desc = "Paste clipboard over buffer";
+      }
+      {
+        key = "<leader>bP";
+        action = "ggVG\"_d\"+P";
+        mode = "n";
+        options.desc = "Paste clipboard over buffer without copying to clipboard";
+      }
+      {
+        key = "<leader>bd";
+        action = "ggVGd";
+        mode = "n";
+        options.desc = "Delete all of buffer";
+      }
+      {
+        key = "<leader>bD";
+        action = "ggVG\"_d";
+        mode = "n";
+        options.desc = "Delete all of buffer without copying to clipboard";
+      }
     ];
   };
 }
