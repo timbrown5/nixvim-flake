@@ -2,9 +2,10 @@
 {
   imports = [
     ./nvchad.nix
+    ./options.nix
     ./core-plugins.nix
     ./snacks.nix
-    ./options.nix
+    ./mini.nix
   ];
 
   config = {
@@ -23,8 +24,13 @@
     };
 
     extraPackages = with pkgs; [
-      nodejs # Required by many language servers
-      gcc # Required for some LSP plugins that need compilation
+      # Core development tools
+      nodejs
+      gcc
+
+      # Python 3.13 with pip
+      python313
+      python313Packages.pip
 
       # Language servers
       lua-language-server
@@ -39,12 +45,15 @@
       "lua/config/fallback.lua".source = ../lua/config/fallback.lua;
       "lua/plugins/snipe.lua".source = ../lua/plugins/snipe.lua;
       "lua/keybinds/deferred.lua".source = ../lua/keybinds/deferred.lua;
-      "lua/keybinds/init.lua".source = ../lua/keybinds/init.lua; # Added the main keybinds module
+      "lua/keybinds/init.lua".source = ../lua/keybinds/init.lua;
       "lua/utils/smart_delete.lua".source = ../lua/utils/smart_delete.lua;
     };
 
     extraConfigLua = ''
       vim.opt.runtimepath:prepend(vim.fn.stdpath("config"))
+
+      -- Ensure system clipboard integration
+      vim.opt.clipboard = "unnamedplus"
 
       require('config.nvchad-config')
       require('config.fallback')

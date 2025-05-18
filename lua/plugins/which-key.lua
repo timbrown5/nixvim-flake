@@ -52,7 +52,6 @@ which_key.setup({
   },
 })
 
--- Register main groups with the proper v3 syntax
 which_key.register({
   b = { name = "Buffer" },
   c = { name = "Code" },
@@ -68,7 +67,6 @@ which_key.register({
   z = { name = "Fold" },
 }, { prefix = "<leader>" })
 
--- Register subgroups
 which_key.register({
   w = { name = "Workspace" },
 }, { prefix = "<leader>l" })
