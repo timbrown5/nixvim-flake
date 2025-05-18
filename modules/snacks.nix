@@ -120,10 +120,10 @@ in
       mermaid-cli
     ];
 
-    extraFiles."lua/plugins/snacks-keybinds.lua".source = ../lua/plugins/snacks-keybinds.lua;
+    extraFiles."lua/keybinds/snacks.lua".source = ../lua/keybinds/snacks.lua;
 
     extraConfigLua = lib.mkAfter ''
-      require('plugins.snacks-keybinds')
+      require('keybinds.snacks')
     '';
   };
 }
