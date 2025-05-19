@@ -6,6 +6,7 @@
     ./core-plugins.nix
     ./snacks.nix
     ./mini.nix
+    ./precognition.nix
   ];
 
   config = {
