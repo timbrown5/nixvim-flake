@@ -39,7 +39,6 @@ in
 
         indent = {
           enabled = true;
-          # Using a table for scope fixes the error from paste.txt
           scope = {
             enabled = true;
             color = "CatppuccinaBlue";
@@ -120,10 +119,10 @@ in
       mermaid-cli
     ];
 
-    extraFiles."lua/keybinds/snacks.lua".source = ../lua/keybinds/snacks.lua;
+    extraFiles."lua/plugins/snacks.lua".source = ../lua/plugins/snacks.lua;
 
     extraConfigLua = lib.mkAfter ''
-      require('keybinds.snacks')
+      require('plugins.snacks')
     '';
   };
 }

@@ -38,6 +38,9 @@
       nil
       nodePackages.typescript-language-server
       pyright
+
+      # Debug adapters
+      python313Packages.debugpy
     ];
 
     extraFiles = {
@@ -45,9 +48,6 @@
       "lua/config/user-config.lua".source = ../lua/config/user-config.lua;
       "lua/config/fallback.lua".source = ../lua/config/fallback.lua;
       "lua/plugins/snipe.lua".source = ../lua/plugins/snipe.lua;
-      "lua/keybinds/deferred.lua".source = ../lua/keybinds/deferred.lua;
-      "lua/keybinds/init.lua".source = ../lua/keybinds/init.lua;
-      "lua/utils/smart_delete.lua".source = ../lua/utils/smart_delete.lua;
     };
 
     extraConfigLua = ''
@@ -60,10 +60,7 @@
       require('config.fallback')
       require('config.user-config')
 
-      require('utils.smart_delete')
-      require('keybinds').setup()
       require('plugins.snipe')
-      require('keybinds.deferred')
     '';
   };
 }

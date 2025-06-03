@@ -62,7 +62,10 @@ which_key.register({
   l = { name = "LSP" },
   m = { name = "Mini" },
   s = { name = "Split/Snacks" },
-  t = { name = "Terminal/Tabs" },
+  t = {
+    name = "Terminal/Tabs",
+    t = "Toggle terminal"
+  },
   w = { name = "Window" },
   z = { name = "Fold" },
 }, { prefix = "<leader>" })
@@ -70,3 +73,18 @@ which_key.register({
 which_key.register({
   w = { name = "Workspace" },
 }, { prefix = "<leader>l" })
+
+-- Debugger submenu
+which_key.register({
+  b = "Toggle breakpoint",
+  B = "Conditional breakpoint",
+  c = "Continue",
+  e = "Evaluate expression",
+  i = "Step into",
+  j = "Step over",
+  l = "Log point",
+  o = "Step out",
+  r = "Restart",
+  t = "Terminate",
+  u = "Toggle UI",
+}, { prefix = "<leader>D" })

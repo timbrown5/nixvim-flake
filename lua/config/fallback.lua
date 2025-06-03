@@ -12,15 +12,9 @@ vim.cmd [[
 
 -- Basic statusline if NvChad's isn't available
 if vim.o.statusline == "" then
-	vim.o.statusline = " %f %m %= %l:%c "
+  vim.o.statusline = " %f %m %= %l:%c "
 end
 
 -- Ensure leader key is set
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-
--- Load keybindings with error handling
-local ok, keybinds = pcall(require, 'keybinds')
-if not ok then
-	vim.notify("Unable to load keybindings in fallback mode", vim.log.levels.WARN)
-end

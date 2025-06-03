@@ -302,27 +302,6 @@ with lib;
         mode = "n";
         options.desc = "Yank line to system clipboard";
       }
-      # Normal mode snipe
-      {
-        key = "s";
-        action = "<cmd>lua require('snipe').snipe()<CR>";
-        mode = "n";
-        options.desc = "Snipe";
-      }
-      {
-        key = "S";
-        action = "<cmd>lua require('snipe').snipe({ backwards = true })<CR>";
-        mode = "n";
-        options.desc = "Snipe backwards";
-      }
-
-      # Operator mode snipe (for commands like 'ds' to delete to a snipe target)
-      {
-        key = "s";
-        action = "<cmd>lua require('snipe').snipe({ operator = true })<CR>";
-        mode = "o";
-        options.desc = "Snipe operator";
-      }
 
       # Buffer operations
       {
@@ -333,15 +312,9 @@ with lib;
       }
       {
         key = "<leader>bp";
-        action = "ggVG\"+p";
-        mode = "n";
-        options.desc = "Paste clipboard over buffer";
-      }
-      {
-        key = "<leader>bP";
         action = "ggVG\"_d\"+P";
         mode = "n";
-        options.desc = "Paste clipboard over buffer without copying to clipboard";
+        options.desc = "Paste clipboard over buffer";
       }
       {
         key = "<leader>bd";

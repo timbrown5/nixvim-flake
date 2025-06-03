@@ -1,9 +1,14 @@
-# In modules/core-plugins.nix
-
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 {
   extraPlugins = with pkgs.vimPlugins; [
     snipe-nvim
+    nvim-dap
+    nvim-dap-ui
+    nvim-dap-virtual-text
   ];
 
   plugins = {
@@ -140,9 +145,13 @@
     comment.enable = true;
   };
 
-  extraFiles."lua/plugins/which-key.lua".source = ../lua/plugins/which-key.lua;
+  extraFiles = {
+    "lua/plugins/which-key.lua".source = ../lua/plugins/which-key.lua;
+    "lua/plugins/debugger.lua".source = ../lua/plugins/debugger.lua;
+  };
 
   extraConfigLua = lib.mkAfter ''
     require("plugins.which-key")
+    require('plugins.debugger')
   '';
 }
