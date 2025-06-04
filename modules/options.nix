@@ -70,12 +70,6 @@ with lib;
         options.desc = "Save all and quit all windows";
       }
       {
-        key = "<leader>q";
-        action = "<cmd>q<CR>";
-        mode = "n";
-        options.desc = "Quit";
-      }
-      {
         key = "<leader>qq";
         action = "<cmd>qa<CR>";
         mode = "n";

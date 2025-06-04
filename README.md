@@ -6,7 +6,7 @@ This Neovim configuration combines the clean, modern UI of NvChad with the decla
 
 - 🎨 **Beautiful UI** based on NvChad with Catppuccin theme
 - 📦 **Fully declarative** configuration with NixVim and Nix flakes
-- 🚀 **Modern UX** with [Snacks.nvim](https://github.com/braddero/snacks.nvim) for file exploration, fuzzy finding, and notifications
+- 🚀 **Modern UX** with [Snacks.nvim](https://github.com/folke/snacks.nvim) for file exploration, fuzzy finding, and notifications
 - 💡 **LSP support** with built-in language servers for Lua, Nix, Python, TypeScript
 - 🐛 **Python debugging** ready out-of-the-box with DAP (Debug Adapter Protocol)
 - 📝 **Organized keybindings** with which-key integration for discoverability
@@ -90,7 +90,6 @@ For complete Neovim documentation, see `:help` or visit [Neovim Documentation](h
 | Key | Mode | Description |
 |-----|------|-------------|
 | `<leader>w` | Normal | Save file |
-| `<leader>q` | Normal | Quit |
 | `jk` | Insert | Exit insert mode |
 | `U` | Normal | Redo |
 
@@ -162,20 +161,35 @@ For complete Neovim documentation, see `:help` or visit [Neovim Documentation](h
 ### LSP (Language Server Protocol)
 See [LSP documentation](https://neovim.io/doc/user/lsp.html) for more details.
 
+#### Quick Navigation
 | Key | Mode | Description |
 |-----|------|-------------|
+| `gd` | Normal | Go to definition |
+| `gr` | Normal | Go to references |
+| `gi` | Normal | Go to implementation |
+| `gt` | Normal | Go to type definition |
 | `K` | Normal | Hover documentation |
+
+#### Actions
+| Key | Mode | Description |
+|-----|------|-------------|
 | `<leader>ca` | Normal | Code action |
 | `<leader>rn` | Normal | Rename symbol |
+
+#### LSP Menu (`<leader>l`)
+| Key | Mode | Description |
+|-----|------|-------------|
 | `<leader>lf` | Normal | Format file |
 | `<leader>lh` | Normal | Hover documentation |
 | `<leader>la` | Normal | Code action |
 | `<leader>ln` | Normal | Rename |
 | `<leader>ls` | Normal | Signature help |
+| `<leader>lgd` | Normal | Go to definition |
+| `<leader>lgr` | Normal | Go to references |
+| `<leader>lgi` | Normal | Go to implementation |
+| `<leader>lgt` | Normal | Go to type definition |
 | `<leader>lwa` | Normal | Add workspace folder |
 | `<leader>lwr` | Normal | Remove workspace folder |
-
-**Note:** Essential LSP navigation keybinds (`gd`, `gr`, `gi`, `gt`) need to be added to the configuration.
 
 ### Diagnostics
 | Key | Mode | Description |
@@ -219,8 +233,7 @@ See [nvim-dap documentation](https://github.com/mfussenegger/nvim-dap) for compl
 | Key | Mode | Description |
 |-----|------|-------------|
 | `<leader>tt` | Normal | Toggle terminal |
-
-**Note:** Terminal escape mapping (`<Esc><Esc>`) needs to be added to the configuration.
+| `<Esc><Esc>` | Terminal | Exit terminal mode |
 
 ### Snacks Utilities
 | Key | Mode | Description |
@@ -273,87 +286,6 @@ See [mini.nvim documentation](https://github.com/echasnovski/mini.nvim) for comp
 | `:FormatDisable` | Disable autoformat-on-save globally |
 | `:FormatDisable!` | Disable autoformat-on-save for current buffer |
 | `:FormatEnable` | Re-enable autoformat-on-save |
-
-## Configuration Fixes Needed
-
-### 1. Plugin Loading Order
-Fix loading order by using proper Nix ordering in your modules:
-
-**In `modules/core-plugins.nix`:**
-```nix
-extraConfigLua = lib.mkAfter ''
-  require("plugins.which-key")
-  require('plugins.debugger')
-'';
-```
-
-**In `modules/default.nix`:**
-```nix
-extraConfigLua = lib.mkBefore ''
-  vim.opt.runtimepath:prepend(vim.fn.stdpath("config"))
-'' + lib.mkOrder 100 ''
-  require('config.nvchad-config')
-  require('config.fallback')
-'' + lib.mkAfter ''
-  require('config.user-config')
-  require('plugins.snipe')
-'';
-```
-
-### 2. Missing LSP Navigation Keybinds
-Add these essential LSP keybinds to `modules/core-plugins.nix`:
-
-```nix
-lspBuf = {
-  # ... existing keybinds ...
-  "gd" = {
-    action = "definition";
-    desc = "Go to definition";
-  };
-  "gr" = {
-    action = "references";
-    desc = "Go to references";
-  };
-  "gi" = {
-    action = "implementation";
-    desc = "Go to implementation";
-  };
-  "gt" = {
-    action = "type_definition";
-    desc = "Go to type definition";
-  };
-};
-```
-
-### 3. Missing Terminal Escape Mapping
-Add this to `modules/options.nix` keymaps:
-
-```nix
-{
-  key = "<Esc><Esc>";
-  action = "<C-\\><C-n>";
-  mode = "t";
-  options.desc = "Exit terminal mode";
-}
-```
-
-### 4. Improve DAP Loading
-In `lua/plugins/debugger.lua`, use deferred loading:
-
-```lua
--- Load DAP configuration after startup
-vim.api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    vim.defer_fn(function()
-      local dap_ok, dap = pcall(require, 'dap')
-      if dap_ok then
-        -- DAP setup code here
-        vim.api.nvim_exec_autocmds("User", { pattern = "DapReady" })
-      end
-    end, 100)
-  end
-})
-```
 
 ## Customization
 
@@ -429,8 +361,6 @@ extraConfigLua = lib.mkAfter ''
 │       ├── snipe.lua       # Snipe setup and keybindings
 │       └── which-key.lua   # Which-key configuration
 ```
-
-Each plugin module owns its complete functionality. To remove a plugin, delete its module and Lua file.
 
 ## Included Plugins
 
