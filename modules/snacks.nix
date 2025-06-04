@@ -23,6 +23,10 @@ in
       enable = true;
       settings = {
         bigfile.enabled = true;
+        quickfile.enabled = true;
+        indent.enabled = true;
+        scope.enabled = true;
+
         notifier = {
           enabled = true;
           render = "modern";
@@ -35,38 +39,53 @@ in
             trace = "✎";
           };
         };
-        quickfile.enabled = true;
 
         indent = {
-          enabled = true;
-          scope = {
-            enabled = true;
-            color = "CatppuccinaBlue";
-          };
           char = "│";
+          priority = 1;
           exclude_filetypes = [
             "help"
             "dashboard"
             "lazy"
             "mason"
             "notify"
+            "snacks_dashboard"
+            "snacks_notif"
+            "snacks_notif_history"
+            "snacks_terminal"
+            "snacks_win"
           ];
-          highlight = [
-            "CatppuccinaSubtext0"
-            "CatppuccinaBlue"
-          ];
-          smart_indent = true;
-          scope_start = true;
-          line_num = true;
+
+          scope = {
+            enabled = true;
+            priority = 200;
+            char = "│";
+            underline = false;
+            only_current = false;
+            hl = "SnacksIndentScope";
+          };
+
+          chunk = {
+            enabled = true;
+            only_current = false;
+            priority = 200;
+            hl = "SnacksIndentChunk";
+            char = {
+              corner_top = "╭";
+              corner_bottom = "╰";
+              horizontal = "─";
+              vertical = "│";
+              arrow = ">";
+            };
+          };
         };
 
         terminal = {
           enabled = true;
-          direction = "float";
+          direction = "bottom";
           shell = "bash";
           size = {
-            width = 0.8;
-            height = 0.8;
+            height = 0.25;
           };
           border = "rounded";
           mappings = {
@@ -81,6 +100,7 @@ in
           max_height = 25;
           window = "float";
         };
+
         explorer = {
           enabled = true;
           position = "left";
@@ -93,6 +113,7 @@ in
             folder_open = "";
           };
         };
+
         picker = {
           sources = {
             files = {
@@ -112,7 +133,6 @@ in
     extraPackages = with pkgs; [
       ripgrep
       fd
-
       imagemagick
       ghostscript
       tectonic
@@ -123,6 +143,9 @@ in
 
     extraConfigLua = lib.mkAfter ''
       require('plugins.snacks')
+
+      vim.g.snacks_indent = true
+      vim.g.snacks_scope = true
     '';
   };
 }

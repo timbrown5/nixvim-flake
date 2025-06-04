@@ -16,6 +16,16 @@
     viAlias = true;
     vimAlias = true;
 
+    # Performance optimizations
+    performance = {
+      byteCompileLua = {
+        enable = true;
+        nvimRuntime = true;
+        configs = true;
+        plugins = true;
+      };
+    };
+
     clipboard = {
       register = "unnamedplus";
       providers = {
@@ -29,18 +39,20 @@
       nodejs
       gcc
 
-      # Python 3.13 with pip
+      # Lua ecosystem
+      lua-language-server # Lua LSP
+
+      # Nix ecosystem
+      nixd # Nix LSP
+
+      # Python ecosystem
       python313
       python313Packages.pip
+      python313Packages.debugpy # Python debugger
+      pyright # Python LSP
 
-      # Language servers
-      lua-language-server
-      nil
-      nodePackages.typescript-language-server
-      pyright
-
-      # Debug adapters
-      python313Packages.debugpy
+      # TypeScript/JavaScript ecosystem
+      nodePackages.typescript-language-server # TypeScript LSP
     ];
 
     extraFiles = {

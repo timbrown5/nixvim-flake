@@ -8,6 +8,22 @@ local function safe_keymap(mode, key, action, opts)
   end
 end
 
+-- Set Catppuccin-themed colors for Snacks indent
+local function setup_indent_colors()
+  local ok, catppuccin = pcall(require, "catppuccin.palettes")
+  if ok then
+    local colors = catppuccin.get_palette("macchiato")
+    vim.api.nvim_set_hl(0, "SnacksIndent", { fg = colors.surface0 })
+    vim.api.nvim_set_hl(0, "SnacksIndentScope", { fg = colors.blue })
+    vim.api.nvim_set_hl(0, "SnacksIndentChunk", { fg = colors.lavender })
+  end
+end
+
+-- Apply colors on startup and colorscheme changes
+vim.api.nvim_create_autocmd({ "VimEnter", "ColorScheme" }, {
+  callback = setup_indent_colors
+})
+
 -- Snacks Explorer keymaps
 safe_keymap('n', '<C-n>', function()
   local ok, snacks = pcall(require, "snacks")

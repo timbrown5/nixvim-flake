@@ -18,6 +18,7 @@ with lib;
       scrolloff = 8;
       sidescrolloff = 8;
       signcolumn = "yes";
+      cursorline = true;
 
       # Search
       ignorecase = true;
@@ -63,10 +64,28 @@ with lib;
         options.desc = "Save file";
       }
       {
+        key = "<leader>WQ";
+        action = "<cmd>wa | qa<CR>";
+        mode = "n";
+        options.desc = "Save all and quit all windows";
+      }
+      {
         key = "<leader>q";
         action = "<cmd>q<CR>";
         mode = "n";
         options.desc = "Quit";
+      }
+      {
+        key = "<leader>qq";
+        action = "<cmd>qa<CR>";
+        mode = "n";  
+        options.desc = "Quit all windows";
+      }
+      {
+        key = "<leader>QQ";
+        action = "<cmd>qa!<CR>";
+        mode = "n";
+        options.desc = "Quit all without saving";
       }
       # Better escape
       {

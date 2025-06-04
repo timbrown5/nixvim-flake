@@ -55,11 +55,12 @@ in
           operators = [ "italic" ];
         };
 
-        dim_inactive = {
-          enabled = true;
-          percentage = 0.1;
-        };
 
+        dim_inactive = {
+          enabled = false;
+          percentage = 0.15;
+        };
+        
         integrations = {
           nvimtree = true;
           telescope = true;
