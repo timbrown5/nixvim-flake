@@ -7,18 +7,23 @@ vim.fn.mkdir(vim.fn.stdpath("data") .. "/nvchad/base46", "p")
 -- Load base theme configuration
 vim.g.nvchad_theme = "catppuccin"
 
--- Load our primary config
+-- Add safety check before accessing cache
 local ok = pcall(function()
-	-- Load base configuration
-	if vim.fn.filereadable(vim.g.base46_cache .. "defaults") == 1 then
-		dofile(vim.g.base46_cache .. "defaults")
-	end
+  -- Check if cache directory and files exist before loading
+  if vim.fn.isdirectory(vim.g.base46_cache) == 1 then
+    if vim.fn.filereadable(vim.g.base46_cache .. "defaults") == 1 then
+      dofile(vim.g.base46_cache .. "defaults")
+    end
 
-	-- Load statusline if available
-	if vim.fn.filereadable(vim.g.base46_cache .. "statusline") == 1 then
-		dofile(vim.g.base46_cache .. "statusline")
-	end
+    if vim.fn.filereadable(vim.g.base46_cache .. "statusline") == 1 then
+      dofile(vim.g.base46_cache .. "statusline")
+    end
+  end
 end)
+
+if not ok then
+  vim.notify("NvChad cache not available, using fallback", vim.log.levels.WARN)
+end
 
 -- Load user configurations
 require("config.user-config")

@@ -172,12 +172,5 @@ safe_keymap('n', '<leader>fk', function()
   end
 end, { desc = "Find keymaps" })
 
--- Snacks terminal keymap
-safe_keymap('n', '<leader>tt', function()
-  local ok, snacks = pcall(require, "snacks")
-  if ok and snacks.terminal then
-    snacks.terminal.toggle()
-  else
-    vim.notify("Snacks terminal not available", vim.log.levels.WARN)
-  end
-end, { desc = "Toggle terminal" })
+-- Snacks terminal keymaps
+safe_keymap('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = "Exit terminal mode" })

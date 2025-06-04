@@ -78,7 +78,7 @@ with lib;
       {
         key = "<leader>qq";
         action = "<cmd>qa<CR>";
-        mode = "n";  
+        mode = "n";
         options.desc = "Quit all windows";
       }
       {

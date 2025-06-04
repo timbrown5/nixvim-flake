@@ -80,6 +80,281 @@ nix build
 }
 ```
 
+## Key Bindings
+
+**Leader key:** `<Space>`
+
+For complete Neovim documentation, see `:help` or visit [Neovim Documentation](https://neovim.io/doc/).
+
+### Basic Operations
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>w` | Normal | Save file |
+| `<leader>q` | Normal | Quit |
+| `jk` | Insert | Exit insert mode |
+| `U` | Normal | Redo |
+
+### Movement & Navigation
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<C-h/j/k/l>` | Normal | Navigate between windows |
+| `<C-d>` | Normal | Jump down and center |
+| `<C-u>` | Normal | Jump up and center |
+| `n` | Normal | Next search result and center |
+| `N` | Normal | Previous search result and center |
+| `<C-a>` | Normal | Select all |
+
+### Line/Selection Movement
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<A-j>` | Normal | Move line down |
+| `<A-k>` | Normal | Move line up |
+| `<A-j>` | Visual | Move selection down |
+| `<A-k>` | Visual | Move selection up |
+| `<` | Visual | Indent left (stay in visual) |
+| `>` | Visual | Indent right (stay in visual) |
+
+### Window & Split Management
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>sv` | Normal | Split window vertically |
+| `<leader>sh` | Normal | Split window horizontally |
+| `<leader>se` | Normal | Make splits equal size |
+| `<leader>sx` | Normal | Close current split |
+
+### Tab Management
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>to` | Normal | Open new tab |
+| `<leader>tx` | Normal | Close current tab |
+| `<leader>tn` | Normal | Go to next tab |
+| `<leader>tp` | Normal | Go to previous tab |
+| `<leader>tf` | Normal | Open current buffer in new tab |
+
+### File Explorer ([Snacks.nvim](https://github.com/folke/snacks.nvim))
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<C-n>` | Normal | Toggle file explorer |
+| `<leader>e` | Normal | Focus file explorer |
+
+### Fuzzy Finding ([Snacks.nvim](https://github.com/folke/snacks.nvim))
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>ff` | Normal | Find files |
+| `<leader>fw` | Normal | Live grep (search in files) |
+| `<leader>fb` | Normal | Find buffers |
+| `<leader>fh` | Normal | Find help |
+| `<leader>fr` | Normal | Recent files |
+| `<leader>fd` | Normal | Find diagnostics |
+| `<leader>fs` | Normal | Find symbols |
+| `<leader>fc` | Normal | Find commands |
+| `<leader>fk` | Normal | Find keymaps |
+
+### Buffer Management
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>S` | Normal | Open visual buffer switcher ([Snipe.nvim](https://github.com/leath-dub/snipe.nvim)) |
+| `<leader>bf` | Normal | Format buffer |
+| `<leader>bp` | Normal | Paste clipboard over buffer |
+| `<leader>bd` | Normal | Delete all of buffer |
+| `<leader>bD` | Normal | Delete all without copying |
+
+### LSP (Language Server Protocol)
+See [LSP documentation](https://neovim.io/doc/user/lsp.html) for more details.
+
+| Key | Mode | Description |
+|-----|------|-------------|
+| `K` | Normal | Hover documentation |
+| `<leader>ca` | Normal | Code action |
+| `<leader>rn` | Normal | Rename symbol |
+| `<leader>lf` | Normal | Format file |
+| `<leader>lh` | Normal | Hover documentation |
+| `<leader>la` | Normal | Code action |
+| `<leader>ln` | Normal | Rename |
+| `<leader>ls` | Normal | Signature help |
+| `<leader>lwa` | Normal | Add workspace folder |
+| `<leader>lwr` | Normal | Remove workspace folder |
+
+**Note:** Essential LSP navigation keybinds (`gd`, `gr`, `gi`, `gt`) need to be added to the configuration.
+
+### Diagnostics
+| Key | Mode | Description |
+|-----|------|-------------|
+| `[d` | Normal | Previous diagnostic |
+| `]d` | Normal | Next diagnostic |
+| `<leader>dp` | Normal | Previous diagnostic |
+| `<leader>dn` | Normal | Next diagnostic |
+| `<leader>df` | Normal | Show diagnostic float |
+| `<leader>dq` | Normal | Send diagnostics to quickfix |
+
+### Debugging (DAP)
+See [nvim-dap documentation](https://github.com/mfussenegger/nvim-dap) for complete debugging guide.
+
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>Db` | Normal | Toggle breakpoint |
+| `<leader>DB` | Normal | Set conditional breakpoint |
+| `<leader>Dl` | Normal | Set log point |
+| `<leader>Dc` | Normal | Continue debugging |
+| `<leader>Dr` | Normal | Restart debugging |
+| `<leader>Dt` | Normal | Terminate debugging |
+| `<leader>Di` | Normal | Step into |
+| `<leader>Dj` | Normal | Step over |
+| `<leader>Do` | Normal | Step out |
+| `<leader>Du` | Normal | Toggle DAP UI |
+| `<leader>De` | Normal/Visual | Evaluate expression |
+
+### Clipboard & Registers
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>d` | Normal/Visual | Delete without copying to register |
+| `<leader>D` | Normal | Delete to end of line without copying |
+| `x` | Normal | Delete char without copying |
+| `<leader>p` | Normal/Visual | Paste from yank register |
+| `<leader>P` | Normal | Paste from yank register before cursor |
+| `<leader>y` | Normal/Visual | Yank to system clipboard |
+| `<leader>Y` | Normal | Yank line to system clipboard |
+
+### Terminal
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>tt` | Normal | Toggle terminal |
+
+**Note:** Terminal escape mapping (`<Esc><Esc>`) needs to be added to the configuration.
+
+### Snacks Utilities
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>sn` | Normal | Show notification history |
+| `<leader>sd` | Normal | Dismiss notifications |
+| `<leader>st` | Normal | Test notification |
+| `<leader>si` | Normal | Show image preview |
+| `<leader>sc` | Normal | Show clipboard image |
+
+### Motion Hints ([Precognition.nvim](https://github.com/tris203/precognition.nvim))
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>pp` | Normal | Toggle motion hints |
+| `<leader>po` | Normal | Peek motion hints (temporary) |
+
+### Mini.nvim Modules
+See [mini.nvim documentation](https://github.com/echasnovski/mini.nvim) for complete module documentation.
+
+#### Mini.surround
+| Key | Mode | Description |
+|-----|------|-------------|
+| `ma` | Normal | Add surrounding |
+| `md` | Normal | Delete surrounding |
+| `mr` | Normal | Replace surrounding |
+| `mf` | Normal | Find surrounding |
+| `mF` | Normal | Find surrounding (left) |
+| `mh` | Normal | Highlight surrounding |
+| `mn` | Normal | Update n lines |
+
+#### Mini.comment
+| Key | Mode | Description |
+|-----|------|-------------|
+| `mgc` | Normal/Visual | Toggle comment |
+| `mgcc` | Normal | Comment line |
+
+#### Mini.jump
+| Key | Mode | Description |
+|-----|------|-------------|
+| `f` | Normal | Jump forward to char |
+| `F` | Normal | Jump backward to char |
+| `t` | Normal | Jump forward till char |
+| `T` | Normal | Jump backward till char |
+| `;` | Normal | Repeat forward jump |
+| `,` | Normal | Repeat backward jump |
+
+### Custom Commands
+| Command | Description |
+|---------|-------------|
+| `:FormatDisable` | Disable autoformat-on-save globally |
+| `:FormatDisable!` | Disable autoformat-on-save for current buffer |
+| `:FormatEnable` | Re-enable autoformat-on-save |
+
+## Configuration Fixes Needed
+
+### 1. Plugin Loading Order
+Fix loading order by using proper Nix ordering in your modules:
+
+**In `modules/core-plugins.nix`:**
+```nix
+extraConfigLua = lib.mkAfter ''
+  require("plugins.which-key")
+  require('plugins.debugger')
+'';
+```
+
+**In `modules/default.nix`:**
+```nix
+extraConfigLua = lib.mkBefore ''
+  vim.opt.runtimepath:prepend(vim.fn.stdpath("config"))
+'' + lib.mkOrder 100 ''
+  require('config.nvchad-config')
+  require('config.fallback')
+'' + lib.mkAfter ''
+  require('config.user-config')
+  require('plugins.snipe')
+'';
+```
+
+### 2. Missing LSP Navigation Keybinds
+Add these essential LSP keybinds to `modules/core-plugins.nix`:
+
+```nix
+lspBuf = {
+  # ... existing keybinds ...
+  "gd" = {
+    action = "definition";
+    desc = "Go to definition";
+  };
+  "gr" = {
+    action = "references";
+    desc = "Go to references";
+  };
+  "gi" = {
+    action = "implementation";
+    desc = "Go to implementation";
+  };
+  "gt" = {
+    action = "type_definition";
+    desc = "Go to type definition";
+  };
+};
+```
+
+### 3. Missing Terminal Escape Mapping
+Add this to `modules/options.nix` keymaps:
+
+```nix
+{
+  key = "<Esc><Esc>";
+  action = "<C-\\><C-n>";
+  mode = "t";
+  options.desc = "Exit terminal mode";
+}
+```
+
+### 4. Improve DAP Loading
+In `lua/plugins/debugger.lua`, use deferred loading:
+
+```lua
+-- Load DAP configuration after startup
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.defer_fn(function()
+      local dap_ok, dap = pcall(require, 'dap')
+      if dap_ok then
+        -- DAP setup code here
+        vim.api.nvim_exec_autocmds("User", { pattern = "DapReady" })
+      end
+    end, 100)
+  end
+})
+```
+
 ## Customization
 
 ### Adding Plugins
