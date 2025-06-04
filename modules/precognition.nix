@@ -91,19 +91,4 @@
       options.desc = "Peek Precognition (temporary)";
     }
   ];
-
-  # Add to which-key
-  extraConfigLua = ''
-    -- Register precognition commands with which-key
-    local ok, which_key = pcall(require, "which-key")
-    if ok then
-      which_key.register({
-        p = { 
-          name = "Precognition",
-          p = "Toggle Precognition",
-          o = "Peek Precognition"
-        }
-      }, { prefix = "<leader>" })
-    end
-  '';
 }
