@@ -133,13 +133,6 @@ with lib;
         mode = "v";
         options.desc = "Indent right";
       }
-      # Select all
-      {
-        key = "<C-a>";
-        action = "gg<S-v>G";
-        mode = "n";
-        options.desc = "Select all";
-      }
       # Center cursor after jumps
       {
         key = "<C-d>";
@@ -340,6 +333,12 @@ with lib;
         action = "ggVG\"_d";
         mode = "n";
         options.desc = "Delete all of buffer without copying to clipboard";
+      }
+      {
+        key = "<leader>bs";
+        action = "ggVG";
+        mode = "n";
+        options.desc = "Select entire buffer";
       }
     ];
   };
