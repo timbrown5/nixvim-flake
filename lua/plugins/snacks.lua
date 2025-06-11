@@ -34,14 +34,16 @@ safe_keymap('n', '<C-n>', function()
   end
 end, { desc = "Toggle file explorer" })
 
+-- Fixed: Use Snacks.explorer() to open the explorer picker
 safe_keymap('n', '<leader>e', function()
   local ok, snacks = pcall(require, "snacks")
   if ok and snacks.explorer then
-    snacks.explorer.focus()
+    -- Open the explorer picker
+    snacks.explorer()
   else
     vim.notify("Snacks explorer not available", vim.log.levels.WARN)
   end
-end, { desc = "Focus file explorer" })
+end, { desc = "Open file explorer" })
 
 -- Snacks notification keymaps
 safe_keymap('n', '<leader>sn', function()
