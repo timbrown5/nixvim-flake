@@ -109,19 +109,43 @@
           "<leader>lwr" = {
             action = "remove_workspace_folder";
             desc = "LSP: Remove workspace folder";
-          }; 
+          };
 
-          "gd" = { action = "definition"; desc = "Go to definition"; };
-          "gr" = { action = "references"; desc = "Go to references"; };
-          "gi" = { action = "implementation"; desc = "Go to implementation"; };
-          "gt" = { action = "type_definition"; desc = "Go to type definition"; };
+          "gd" = {
+            action = "definition";
+            desc = "Go to definition";
+          };
+          "gr" = {
+            action = "references";
+            desc = "Go to references";
+          };
+          "gi" = {
+            action = "implementation";
+            desc = "Go to implementation";
+          };
+          "gt" = {
+            action = "type_definition";
+            desc = "Go to type definition";
+          };
 
-          "<leader>lgd" = { action = "definition"; desc = "LSP: Go to definition"; };
-          "<leader>lgr" = { action = "references"; desc = "LSP: Go to references"; };
-          "<leader>lgi" = { action = "implementation"; desc = "LSP: Go to implementation"; };
-          "<leader>lgt" = { action = "type_definition"; desc = "LSP: Go to type definition"; };
+          "<leader>lgd" = {
+            action = "definition";
+            desc = "LSP: Go to definition";
+          };
+          "<leader>lgr" = {
+            action = "references";
+            desc = "LSP: Go to references";
+          };
+          "<leader>lgi" = {
+            action = "implementation";
+            desc = "LSP: Go to implementation";
+          };
+          "<leader>lgt" = {
+            action = "type_definition";
+            desc = "LSP: Go to type definition";
+          };
         };
-    
+
         diagnostic = {
           "[d" = {
             action = "goto_prev";

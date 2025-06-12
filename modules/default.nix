@@ -7,6 +7,7 @@
     ./snacks.nix
     ./mini.nix
     ./precognition.nix
+    ./dashboard.nix
   ];
 
   config = {

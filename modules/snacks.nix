@@ -27,6 +27,8 @@ in
         indent.enabled = true;
         scope.enabled = true;
 
+        dashboard.enabled = false;
+
         notifier = {
           enabled = true;
           render = "modern";
