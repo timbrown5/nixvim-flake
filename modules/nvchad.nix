@@ -103,18 +103,18 @@ in
           vim.api.nvim_set_hl(0, "@type.builtin", { italic = true })
           vim.api.nvim_set_hl(0, "@type.definition", { italic = true })
           vim.api.nvim_set_hl(0, "@type.qualifier", { italic = true })
-          
+
           local colors = require("catppuccin.palettes").get_palette()
-          vim.api.nvim_set_hl(0, "LineNr", { 
+          vim.api.nvim_set_hl(0, "LineNr", {
             fg = colors.blue,
-            bold = true 
+            bold = true
           })
-          
-          vim.api.nvim_set_hl(0, "CursorLineNr", { 
+
+          vim.api.nvim_set_hl(0, "CursorLineNr", {
             fg = colors.yellow,
-            bold = true 
+            bold = true
           })
-          
+
           vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
         end
       })

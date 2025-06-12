@@ -41,7 +41,7 @@ nix build
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    
+
     nixvim-flake = {
       url = "github:timbrown5/nixvim-flake/nvchad-base";
       inputs.nixpkgs.follows = "nixpkgs";
