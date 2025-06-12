@@ -1,10 +1,7 @@
-# In modules/mini.nix
-
 { pkgs, lib, ... }:
 {
   plugins.mini = {
     enable = true;
-
     modules = {
       pairs = {
         modes = {
@@ -12,7 +9,6 @@
           command = false;
           terminal = false;
         };
-
         mappings = {
           "(" = {
             action = "open";
@@ -61,7 +57,6 @@
           };
         };
       };
-
       icons = {
         use_default_for = [
           "kind"
@@ -69,10 +64,8 @@
           "git"
           "ui"
         ];
-
         lsp.kind.enabled = true;
       };
-
       surround = {
         mappings = {
           add = "ma";
@@ -84,7 +77,6 @@
           update_n_lines = "mn";
         };
       };
-
       ai = {
         n_lines = 50;
         custom_textobjects = {
@@ -104,10 +96,8 @@
             pattern = "%b**";
           };
         };
-
         search_method = "cover_or_nearest";
       };
-
       jump = {
         mappings = {
           forward = "f";
@@ -117,10 +107,8 @@
           forward_repeat = ";";
           backward_repeat = ",";
         };
-
         highlight_duration = 500;
       };
-
       comment = {
         options = {
           custom_commentstring = null;
@@ -128,7 +116,6 @@
           start_of_line = false;
           pad_comment_parts = true;
         };
-
         mappings = {
           comment = "mgc";
           comment_line = "mgcc";

@@ -7,6 +7,7 @@
     ./snacks.nix
     ./mini.nix
     ./precognition.nix
+    # ./dashboard.nix removed - now using Snacks dashboard
   ];
 
   config = {
