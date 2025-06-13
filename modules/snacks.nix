@@ -32,34 +32,35 @@ in
           sections = [
             {
               section = "header";
-              padding = [
-                0
-                1
-              ];
+              padding = 1;
             }
             {
               section = "keys";
+              title = "Shortcuts";
               gap = 0;
               padding = 1;
             }
             {
               section = "recent_files";
+              title = "Recent Files";
               limit = 8;
               gap = 0;
               padding = 1;
             }
             {
               section = "terminal";
-              icon = " ";
               title = "Git Status";
               enabled = "function() return Snacks.git.get_root() ~= nil end";
-              cmd = "git status --short --branch --renames";
+              cmd = "git --no-pager diff --stat -B -M -C";
               height = 5;
               padding = 1;
               ttl = 300;
-              indent = 3;
+              indent = 2;
+              hl = "Special";
             }
-            { section = "startup"; }
+            {
+              section = "startup";
+            }
           ];
           preset = {
             keys = [
