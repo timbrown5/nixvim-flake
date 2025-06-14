@@ -121,24 +121,26 @@ which_key.setup({
 	debug = false,
 })
 
--- Add group definitions using the new spec format
 which_key.add({
-	-- Only group definitions needed
-	{ "<leader>b", group = "Buffer" },
-	{ "<leader>c", group = "Code" },
-	{ "<leader>d", group = "Diagnostics/Delete" },
-	{ "<leader>D", group = "Debug" },
-	{ "<leader>f", group = "Find/Files" },
-	{ "<leader>g", group = "Git" },
-	{ "<leader>l", group = "LSP" },
-	{ "<leader>m", group = "Mini" },
-	{ "<leader>p", group = "Precognition" },
-	{ "<leader>s", group = "Split/Snacks" },
-	{ "<leader>t", group = "Terminal/Tabs" },
-	{ "<leader>w", group = "Window" },
-	{ "<leader>z", group = "Fold" },
+	-- Core functional groups
+	{ "<leader>b", group = "󰓩 Buffer Operations" },
+	{ "<leader>c", group = "󰨞 Code & Formatting" },
+	{ "<leader>d", group = "󰩈 Diagnostics & Delete" },
+	{ "<leader>f", group = "󰍉 Find & Search" },
+	{ "<leader>g", group = "󰊢 Git Operations" },
+	{ "<leader>l", group = "󰿘 Language Server" },
+	{ "<leader>m", group = "󰏘 Text Manipulation" },
+	{ "<leader>n", group = "󰎟 Notifications" },
+	{ "<leader>s", group = "󰦝 Splits & Sessions" },
+	{ "<leader>t", group = "󰙅 Terminal & Tabs" },
+	{ "<leader>v", group = "󰋩 View & Visual" },
+	{ "<leader>w", group = "󰖲 Window Management" },
+	{ "<leader>z", group = "󰘖 Fold Operations" },
 
-	-- Subgroups
-	{ "<leader>lw", group = "Workspace" },
-	{ "<leader>lg", group = "Goto" },
+	-- Debugging
+	{ "<leader>D", group = "󰃤 Debug & Breakpoints" },
+
+	-- LSP subgroups
+	{ "<leader>lg", group = "󰉺 Go To Navigation" },
+	{ "<leader>lw", group = "󰉋 Workspace Management" },
 })

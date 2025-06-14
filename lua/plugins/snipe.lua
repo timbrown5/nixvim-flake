@@ -10,7 +10,6 @@ snipe.setup({
 	bounds = 150,
 })
 
--- Snipe keybind
-vim.keymap.set("n", "<leader>S", function()
+vim.keymap.set("n", "<leader>vs", function()
 	snipe.open_buffer_menu()
-end, { desc = "Open Snipe buffer menu" })
+end, { desc = "View buffer switcher" })

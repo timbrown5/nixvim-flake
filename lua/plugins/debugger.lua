@@ -1,6 +1,3 @@
--- DAP (Debug Adapter Protocol) configuration and keybindings
-
--- Configure DAP signs for visual breakpoint indicators
 vim.fn.sign_define("DapBreakpoint", {
 	text = "🔴",
 	texthl = "DapBreakpoint",
@@ -29,7 +26,6 @@ vim.fn.sign_define("DapStopped", {
 	numhl = "",
 })
 
--- Helper function for safe keymapping
 local function safe_keymap(mode, key, action, opts)
 	local ok, error = pcall(vim.keymap.set, mode, key, action, opts)
 	if not ok then
@@ -37,15 +33,31 @@ local function safe_keymap(mode, key, action, opts)
 	end
 end
 
--- Basic DAP setup
 local dap_ok, dap = pcall(require, "dap")
 if dap_ok then
-	-- Python debug adapter configuration
-	dap.adapters.python = {
-		type = "executable",
-		command = "python",
-		args = { "-m", "debugpy.adapter" },
-	}
+	dap.adapters.python = function(cb, config)
+		if config.request == "attach" then
+			local port = (config.connect or config).port
+			local host = (config.connect or config).host or "127.0.0.1"
+			cb({
+				type = "server",
+				port = assert(port, "`connect.port` is required for a python `attach` configuration"),
+				host = host,
+				options = {
+					source_filetype = "python",
+				},
+			})
+		else
+			cb({
+				type = "executable",
+				command = vim.fn.exepath("python3") or vim.fn.exepath("python") or "python3",
+				args = { "-m", "debugpy.adapter" },
+				options = {
+					source_filetype = "python",
+				},
+			})
+		end
+	end
 
 	dap.configurations.python = {
 		{
@@ -54,7 +66,7 @@ if dap_ok then
 			name = "Launch file",
 			program = "${file}",
 			pythonPath = function()
-				return "python"
+				return vim.fn.exepath("python3") or vim.fn.exepath("python") or "python3"
 			end,
 		},
 		{
@@ -67,17 +79,15 @@ if dap_ok then
 				return vim.split(args_string, " +")
 			end,
 			pythonPath = function()
-				return "python"
+				return vim.fn.exepath("python3") or vim.fn.exepath("python") or "python3"
 			end,
 		},
 	}
 
-	-- Configure DAP UI
 	local dapui_ok, dapui = pcall(require, "dapui")
 	if dapui_ok then
 		dapui.setup()
 
-		-- Auto-open/close DAP UI
 		dap.listeners.after.event_initialized["dapui_config"] = function()
 			dapui.open()
 		end
@@ -89,14 +99,12 @@ if dap_ok then
 		end
 	end
 
-	-- Configure virtual text
 	local virtual_text_ok, virtual_text = pcall(require, "nvim-dap-virtual-text")
 	if virtual_text_ok then
 		virtual_text.setup()
 	end
 end
 
--- DAP keymaps - only set up when DAP is loaded
 vim.api.nvim_create_autocmd("User", {
 	pattern = "DapReady",
 	once = true,
@@ -182,7 +190,6 @@ vim.api.nvim_create_autocmd("User", {
 			end
 		end, { desc = "Evaluate expression" })
 
-		-- Visual mode eval
 		safe_keymap("v", "<leader>De", function()
 			local ok, dapui = pcall(require, "dapui")
 			if ok then
@@ -196,7 +203,6 @@ vim.api.nvim_create_autocmd("User", {
 	end,
 })
 
--- Immediate keymaps that don't require DAP to be loaded
 safe_keymap("n", "<leader>DB", function()
 	local ok, dap = pcall(require, "dap")
 	if ok then

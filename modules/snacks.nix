@@ -32,35 +32,34 @@ in
           sections = [
             {
               section = "header";
-              padding = 1;
+              padding = [
+                0
+                1
+              ];
             }
             {
               section = "keys";
-              title = "Shortcuts";
               gap = 0;
               padding = 1;
             }
             {
               section = "recent_files";
-              title = "Recent Files";
               limit = 8;
               gap = 0;
               padding = 1;
             }
             {
               section = "terminal";
+              icon = " ";
               title = "Git Status";
               enabled = "function() return Snacks.git.get_root() ~= nil end";
-              cmd = "git --no-pager diff --stat -B -M -C";
+              cmd = "git status --short --branch --renames";
               height = 5;
               padding = 1;
               ttl = 300;
-              indent = 2;
-              hl = "Special";
+              indent = 3;
             }
-            {
-              section = "startup";
-            }
+            { section = "startup"; }
           ];
           preset = {
             keys = [
@@ -117,6 +116,21 @@ in
       };
     };
 
+    keymaps = [
+      {
+        key = "<Esc><Esc>";
+        action = "<C-\\><C-n>";
+        mode = "t";
+        options.desc = "Exit terminal mode";
+      }
+      {
+        key = "<leader>tt";
+        action = "<cmd>lua Snacks.terminal()<CR>";
+        mode = "n";
+        options.desc = "Toggle terminal";
+      }
+    ];
+
     extraPackages = with pkgs; [
       ripgrep
       fd
@@ -125,13 +139,15 @@ in
     extraFiles = {
       "lua/plugins/snacks.lua".source = ../lua/plugins/snacks.lua;
       "lua/plugins/snacks-dashboard.lua".text = ''
-        -- Simple Snacks Dashboard customization
         local M = {}
 
-        -- Record startup time
+        -- Mock lazy.stats before anything else
+        package.preload['lazy.stats'] = function()
+          return { stats = function() return { loaded = 0, count = 0, startuptime = 0 } end }
+        end
+
         vim.g.start_time = vim.g.start_time or vim.fn.reltime()
 
-        -- Rainbow header
         local header_lines = {
           "███╗   ██╗██╗██╗  ██╗██╗   ██╗██╗███╗   ███╗",
           "████╗  ██║██║╚██╗██╔╝██║   ██║██║████╗ ████║",
@@ -150,15 +166,13 @@ in
         }
 
         function M.setup()
-          -- Mock lazy.stats to prevent errors
-          package.preload['lazy.stats'] = function()
-            return { stats = function() return { loaded = 0, count = 0, startuptime = 0 } end }
+          local snacks_ok, snacks = pcall(require, "snacks")
+          if not snacks_ok then
+            vim.notify("Snacks not available for dashboard setup", vim.log.levels.WARN)
+            return
           end
 
-          local snacks_ok, snacks = pcall(require, "snacks")
-          if not snacks_ok then return end
-
-          -- Rainbow header
+          -- Override the header section
           snacks.dashboard.sections.header = function()
             return function()
               local items = {}
@@ -170,12 +184,11 @@ in
             end
           end
 
-          -- Custom startup section with plugin count
+          -- Override the startup section
           snacks.dashboard.sections.startup = function()
             return function()
               local startup_ms = tonumber(vim.fn.reltimestr(vim.fn.reltime(vim.g.start_time))) * 1000
 
-              -- Count only actual vim plugins from extraPlugins and plugins config
               local plugin_count = 0
               for _, path in ipairs(vim.api.nvim_list_runtime_paths()) do
                 local plugin_name = path:match(".*/pack/.*/start/([^/]+)$")
@@ -183,7 +196,7 @@ in
                    not plugin_name:match("^site") and
                    not plugin_name:match("^nvim%-") and
                    plugin_name ~= "nvim" and
-                   vim.fn.isdirectory(path .. "/plugin") == 1 or vim.fn.isdirectory(path .. "/lua") == 1 then
+                   (vim.fn.isdirectory(path .. "/plugin") == 1 or vim.fn.isdirectory(path .. "/lua") == 1) then
                   plugin_count = plugin_count + 1
                 end
               end
@@ -195,20 +208,27 @@ in
             end
           end
 
-          -- Dashboard toggle keymap
-          vim.keymap.set('n', '<leader>d', function() snacks.dashboard() end, { desc = 'Open Dashboard' })
+          -- Set up the dashboard keymap
+          vim.keymap.set('n', '<leader>vd', function()
+            snacks.dashboard()
+          end, { desc = 'View dashboard' })
         end
 
         return M
       '';
     };
 
-    # Record startup time early
     extraConfigVim = ''
       lua vim.g.start_time = vim.fn.reltime()
+      lua package.preload['lazy.stats'] = function() return { stats = function() return { loaded = 0, count = 0, startuptime = 0 } end } end
     '';
 
     extraConfigLua = lib.mkAfter ''
+      -- Mock lazy.stats early to prevent Snacks dashboard errors
+      package.preload['lazy.stats'] = function()
+        return { stats = function() return { loaded = 0, count = 0, startuptime = 0 } end }
+      end
+
       require('plugins.snacks')
       require('plugins.snacks-dashboard').setup()
     '';

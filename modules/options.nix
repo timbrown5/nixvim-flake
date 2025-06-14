@@ -1,51 +1,41 @@
 { config, lib, ... }:
 with lib;
 {
-  config = mkForce {
+  config = {
     opts = {
-      # Line numbers
       number = true;
       relativenumber = true;
 
-      # Tabs - these should be sufficient for 2-space indentation
       tabstop = 2;
       shiftwidth = 2;
       expandtab = true;
       autoindent = true;
 
-      # UI
       wrap = false;
       scrolloff = 8;
       sidescrolloff = 8;
       signcolumn = "yes";
       cursorline = true;
 
-      # Search
       ignorecase = true;
       smartcase = true;
       hlsearch = true;
 
-      # Backup
       swapfile = false;
       backup = false;
       undofile = true;
 
-      # Performance
       updatetime = 300;
       timeout = true;
       timeoutlen = 1000;
 
-      # Colors
       termguicolors = true;
 
-      # Splits
       splitbelow = true;
       splitright = true;
 
-      # Mouse
       mouse = "a";
 
-      # Completion
       completeopt = "menuone,noselect";
     };
 
@@ -54,9 +44,7 @@ with lib;
       maplocalleader = " ";
     };
 
-    # General keybindings - core set that should be available even when fallbacks kick in
     keymaps = [
-      # Basic operations
       {
         key = "<leader>w";
         action = "<cmd>w<CR>";
@@ -81,21 +69,18 @@ with lib;
         mode = "n";
         options.desc = "Quit all without saving";
       }
-      # Better escape
       {
         key = "jk";
         action = "<Esc>";
         mode = "i";
         options.desc = "Exit insert mode";
       }
-      # Redo
       {
         key = "U";
         action = "<C-r>";
         mode = "n";
         options.desc = "Redo (also <C-r>)";
       }
-      # Move lines
       {
         key = "<A-j>";
         action = ":m .+1<CR>==";
@@ -120,7 +105,6 @@ with lib;
         mode = "v";
         options.desc = "Move selection up";
       }
-      # Better indenting
       {
         key = "<";
         action = "<gv";
@@ -133,7 +117,6 @@ with lib;
         mode = "v";
         options.desc = "Indent right";
       }
-      # Center cursor after jumps
       {
         key = "<C-d>";
         action = "<C-d>zz";
@@ -159,7 +142,6 @@ with lib;
         options.desc = "Previous search result and center";
       }
 
-      # Window navigation
       {
         key = "<C-h>";
         action = "<C-w>h";
@@ -185,79 +167,62 @@ with lib;
         options.desc = "Navigate window right";
       }
 
-      # WINDOW OPERATIONS - <leader>w prefix (plugin-agnostic)
       {
-        key = "<leader>wv";
+        key = "<leader>sv";
         action = "<C-w>v";
         mode = "n";
-        options.desc = "Window split vertical";
+        options.desc = "Split window vertically";
       }
       {
-        key = "<leader>wh";
+        key = "<leader>sh";
         action = "<C-w>s";
         mode = "n";
-        options.desc = "Window split horizontal";
+        options.desc = "Split window horizontally";
       }
       {
-        key = "<leader>we";
+        key = "<leader>se";
         action = "<C-w>=";
         mode = "n";
-        options.desc = "Window equal size";
+        options.desc = "Make splits equal size";
       }
       {
-        key = "<leader>wx";
+        key = "<leader>sx";
         action = "<cmd>close<CR>";
         mode = "n";
-        options.desc = "Window close";
+        options.desc = "Close current split";
       }
 
-      # TAB OPERATIONS - <leader>t prefix with dual options
       {
         key = "<leader>to";
         action = "<cmd>tabnew<CR>";
         mode = "n";
-        options.desc = "Tab open";
+        options.desc = "Open new tab";
       }
       {
         key = "<leader>tx";
         action = "<cmd>tabclose<CR>";
         mode = "n";
-        options.desc = "Tab close";
+        options.desc = "Close current tab";
       }
-      # Semantic options (existing)
       {
         key = "<leader>tn";
         action = "<cmd>tabn<CR>";
         mode = "n";
-        options.desc = "Tab next";
+        options.desc = "Go to next tab";
       }
       {
         key = "<leader>tp";
         action = "<cmd>tabp<CR>";
         mode = "n";
-        options.desc = "Tab previous";
-      }
-      # Mnemonic options (new alternatives)
-      {
-        key = "<leader>tj";
-        action = "<cmd>tabn<CR>";
-        mode = "n";
-        options.desc = "Tab next (alternative)";
-      }
-      {
-        key = "<leader>tk";
-        action = "<cmd>tabp<CR>";
-        mode = "n";
-        options.desc = "Tab previous (alternative)";
+        options.desc = "Go to previous tab";
       }
       {
         key = "<leader>tf";
         action = "<cmd>tabnew %<CR>";
         mode = "n";
-        options.desc = "Tab from current buffer";
+        options.desc = "Open current buffer in new tab";
       }
 
-      # Clipboard operations (using black hole register)
       {
         key = "<leader>d";
         action = "\"_d";
@@ -271,19 +236,12 @@ with lib;
         options.desc = "Delete without yanking";
       }
       {
-        key = "<leader>D";
-        action = "\"_D";
-        mode = "n";
-        options.desc = "Delete to end of line without yanking";
-      }
-      {
         key = "x";
         action = "\"_x";
         mode = "n";
         options.desc = "Delete char without yanking";
       }
 
-      # Paste from yank register
       {
         key = "<leader>p";
         action = "\"0p";
@@ -303,7 +261,6 @@ with lib;
         options.desc = "Paste from yank register";
       }
 
-      # System clipboard
       {
         key = "<leader>y";
         action = "\"+y";
@@ -323,7 +280,12 @@ with lib;
         options.desc = "Yank line to system clipboard";
       }
 
-      # Buffer operations (remove bf - it's in conform.nix now)
+      {
+        key = "<leader>bf";
+        action = "<cmd>lua require('conform').format({ async = true, lsp_fallback = true })<CR>";
+        mode = "n";
+        options.desc = "Format buffer with Conform";
+      }
       {
         key = "<leader>bp";
         action = "ggVG\"_d\"+P";
@@ -347,55 +309,6 @@ with lib;
         action = "ggVG";
         mode = "n";
         options.desc = "Select entire buffer";
-      }
-
-      # ORDER OPERATIONS - <leader>o prefix (plugin-agnostic sorting)
-      # Alphabetical sorting
-      {
-        key = "<leader>oa";
-        action = ":'<,'>sort<CR>";
-        mode = "v";
-        options.desc = "Order alphabetical (ascending)";
-      }
-      {
-        key = "<leader>oA";
-        action = ":'<,'>sort!<CR>";
-        mode = "v";
-        options.desc = "Order alphabetical (descending)";
-      }
-      # Numerical sorting
-      {
-        key = "<leader>on";
-        action = ":'<,'>sort n<CR>";
-        mode = "v";
-        options.desc = "Order numerical (ascending)";
-      }
-      {
-        key = "<leader>oN";
-        action = ":'<,'>sort! n<CR>";
-        mode = "v";
-        options.desc = "Order numerical (descending)";
-      }
-      # Unique sorting
-      {
-        key = "<leader>ou";
-        action = ":'<,'>sort u<CR>";
-        mode = "v";
-        options.desc = "Order unique (remove duplicates)";
-      }
-      {
-        key = "<leader>oU";
-        action = ":'<,'>sort! u<CR>";
-        mode = "v";
-        options.desc = "Order unique descending";
-      }
-
-      # SURROUND LOCATE - Additional keybinding (same function as highlight)
-      {
-        key = "<leader>sl";
-        action = "lua require('mini.surround').highlight()";
-        mode = "n";
-        options.desc = "Surround locate (same as highlight)";
       }
     ];
   };

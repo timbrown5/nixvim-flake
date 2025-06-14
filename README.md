@@ -13,6 +13,7 @@ This Neovim configuration combines the clean, modern UI of NvChad with the decla
 - 🔍 **Visual buffer switching** with Snipe.nvim for easy navigation
 - 🖼️ **Image preview** support in Kitty terminal
 - ⚡ **Performance optimized** with tree-sitter and modern completion
+- 🎯 **Smart formatting** with Conform.nvim for 10+ languages
 
 ## Quick Start
 
@@ -101,7 +102,6 @@ For complete Neovim documentation, see `:help` or visit [Neovim Documentation](h
 | `<C-u>` | Normal | Jump up and center |
 | `n` | Normal | Next search result and center |
 | `N` | Normal | Previous search result and center |
-| `<C-a>` | Normal | Select all |
 
 ### Line/Selection Movement
 | Key | Mode | Description |
@@ -134,7 +134,7 @@ For complete Neovim documentation, see `:help` or visit [Neovim Documentation](h
 | Key | Mode | Description |
 |-----|------|-------------|
 | `<C-n>` | Normal | Toggle file explorer |
-| `<leader>e` | Normal | Focus file explorer |
+| `<leader>e` | Normal | Open file explorer |
 
 ### Fuzzy Finding ([Snacks.nvim](https://github.com/folke/snacks.nvim))
 | Key | Mode | Description |
@@ -152,11 +152,35 @@ For complete Neovim documentation, see `:help` or visit [Neovim Documentation](h
 ### Buffer Management
 | Key | Mode | Description |
 |-----|------|-------------|
-| `<leader>S` | Normal | Open visual buffer switcher ([Snipe.nvim](https://github.com/leath-dub/snipe.nvim)) |
-| `<leader>bf` | Normal | Format buffer |
+| `<leader>vs` | Normal | View buffer switcher ([Snipe.nvim](https://github.com/leath-dub/snipe.nvim)) |
+| `<leader>bf` | Normal | Format buffer with Conform |
 | `<leader>bp` | Normal | Paste clipboard over buffer |
 | `<leader>bd` | Normal | Delete all of buffer |
 | `<leader>bD` | Normal | Delete all without copying |
+| `<leader>bs` | Normal | Select entire buffer |
+
+### Code & Formatting ([Conform.nvim](https://github.com/stevearc/conform.nvim))
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>cf` | Normal | Format buffer with Conform |
+| `<leader>cF` | Visual | Format selection with Conform |
+
+### View & Visual Operations
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>vd` | Normal | View dashboard |
+| `<leader>vh` | Normal | View motion hints (temporary) |
+| `<leader>vH` | Normal | Toggle motion hints |
+| `<leader>vi` | Normal | View image preview |
+| `<leader>vc` | Normal | View clipboard image |
+| `<leader>vs` | Normal | View buffer switcher |
+
+### Notifications
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>nh` | Normal | Show notification history |
+| `<leader>nd` | Normal | Dismiss notifications |
+| `<leader>nt` | Normal | Test notification |
 
 ### LSP (Language Server Protocol)
 See [LSP documentation](https://neovim.io/doc/user/lsp.html) for more details.
@@ -179,7 +203,7 @@ See [LSP documentation](https://neovim.io/doc/user/lsp.html) for more details.
 #### LSP Menu (`<leader>l`)
 | Key | Mode | Description |
 |-----|------|-------------|
-| `<leader>lf` | Normal | Format file |
+| `<leader>lf` | Normal | Format document (LSP only) |
 | `<leader>lh` | Normal | Hover documentation |
 | `<leader>la` | Normal | Code action |
 | `<leader>ln` | Normal | Rename |
@@ -222,7 +246,6 @@ See [nvim-dap documentation](https://github.com/mfussenegger/nvim-dap) for compl
 | Key | Mode | Description |
 |-----|------|-------------|
 | `<leader>d` | Normal/Visual | Delete without copying to register |
-| `<leader>D` | Normal | Delete to end of line without copying |
 | `x` | Normal | Delete char without copying |
 | `<leader>p` | Normal/Visual | Paste from yank register |
 | `<leader>P` | Normal | Paste from yank register before cursor |
@@ -234,21 +257,6 @@ See [nvim-dap documentation](https://github.com/mfussenegger/nvim-dap) for compl
 |-----|------|-------------|
 | `<leader>tt` | Normal | Toggle terminal |
 | `<Esc><Esc>` | Terminal | Exit terminal mode |
-
-### Snacks Utilities
-| Key | Mode | Description |
-|-----|------|-------------|
-| `<leader>sn` | Normal | Show notification history |
-| `<leader>sd` | Normal | Dismiss notifications |
-| `<leader>st` | Normal | Test notification |
-| `<leader>si` | Normal | Show image preview |
-| `<leader>sc` | Normal | Show clipboard image |
-
-### Motion Hints ([Precognition.nvim](https://github.com/tris203/precognition.nvim))
-| Key | Mode | Description |
-|-----|------|-------------|
-| `<leader>pp` | Normal | Toggle motion hints |
-| `<leader>po` | Normal | Peek motion hints (temporary) |
 
 ### Mini.nvim Modules
 See [mini.nvim documentation](https://github.com/echasnovski/mini.nvim) for complete module documentation.
@@ -286,6 +294,25 @@ See [mini.nvim documentation](https://github.com/echasnovski/mini.nvim) for comp
 | `:FormatDisable` | Disable autoformat-on-save globally |
 | `:FormatDisable!` | Disable autoformat-on-save for current buffer |
 | `:FormatEnable` | Re-enable autoformat-on-save |
+| `:FormatInfo` | Show available formatters for current buffer |
+
+## Supported Languages & Formatters
+
+### Language Servers (LSP)
+- **Lua** - lua_ls
+- **Nix** - nixd
+- **Python** - pyright
+- **TypeScript/JavaScript** - ts_ls
+
+### Formatters ([Conform.nvim](https://github.com/stevearc/conform.nvim))
+- **Lua** - stylua
+- **Nix** - nixfmt
+- **JavaScript/TypeScript/React** - prettier
+- **Python** - black + isort
+- **Shell** - shfmt
+- **Web** - prettier (HTML, CSS, JSON, YAML, Markdown)
+- **Rust** - rustfmt (configured)
+- **Go** - goimports + gofmt (configured)
 
 ## Customization
 
@@ -311,6 +338,24 @@ colorschemes.catppuccin = {
     flavour = "mocha";  # or "latte", "frappe", "macchiato"
   };
 };
+```
+
+### Adding Formatters
+
+Edit `modules/conform.nix`:
+
+```nix
+formatters_by_ft = {
+  # Add your language and formatter
+  rust = [ "rustfmt" ];
+  go = [ "goimports" "gofmt" ];
+};
+
+extraPackages = with pkgs; [
+  # Add formatter packages
+  rustfmt
+  go
+];
 ```
 
 ### Adding Keybindings
@@ -349,7 +394,8 @@ extraConfigLua = lib.mkAfter ''
 │   ├── snacks.nix          # Snacks.nvim plugin module
 │   ├── core-plugins.nix    # Core plugins (LSP, DAP, etc.)
 │   ├── mini.nix            # Mini.nvim configurations
-│   └── precognition.nix    # Motion hints plugin
+│   ├── precognition.nix    # Motion hints plugin
+│   └── conform.nix         # Formatting with Conform.nvim
 ├── lua/
 │   ├── config/             # General Neovim configuration
 │   │   ├── nvchad-config.lua
@@ -370,6 +416,7 @@ extraConfigLua = lib.mkAfter ''
 - **Debugging**: nvim-dap, nvim-dap-ui, nvim-dap-virtual-text (Python debugging ready)
 - **UI Enhancement**: Catppuccin theme, indent guides, notifications
 - **Buffer Management**: Snipe.nvim (visual buffer switcher)
+- **Formatting**: Conform.nvim (10+ language support)
 - **Utilities**: Mini.nvim modules, terminal, image preview, motion hints
 
 ## Python Debugging Guide

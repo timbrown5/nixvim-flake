@@ -1,18 +1,13 @@
-# In modules/precognition.nix
-
 { pkgs, lib, ... }:
 {
   plugins.precognition = {
     enable = true;
     settings = {
-      # Enable on startup
       startVisible = true;
 
-      # Display settings
       showBlankVirtLine = true;
       highlightColor.link = "Comment";
 
-      # Horizontal motion hints
       hints = {
         Caret.text = "^";
         Caret.prio = 2;
@@ -45,7 +40,6 @@
         E.prio = 5;
       };
 
-      # Vertical motion hints
       gutterHints = {
         G.text = "G";
         G.prio = 10;
@@ -60,7 +54,6 @@
         NextParagraph.prio = 8;
       };
 
-      # Disable in these file types
       disabled_fts = [
         "help"
         "dashboard"
@@ -73,22 +66,18 @@
     };
   };
 
-  # Add toggle and peek keybindings
   keymaps = [
     {
-      key = "<leader>pp";
-      action = "require('precognition').toggle()";
+      key = "<leader>vH";
+      action = "<cmd>lua require('precognition').toggle()<CR>";
       mode = "n";
-      lua = true;
-      options.desc = "Toggle Precognition";
+      options.desc = "Toggle motion hints";
     }
-
     {
-      key = "<leader>po";
-      action = "require('precognition').peek()";
+      key = "<leader>vh";
+      action = "<cmd>lua require('precognition').peek()<CR>";
       mode = "n";
-      lua = true;
-      options.desc = "Peek Precognition (temporary)";
+      options.desc = "View motion hints (temporary)";
     }
   ];
 }

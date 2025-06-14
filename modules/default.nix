@@ -17,7 +17,6 @@
     viAlias = true;
     vimAlias = true;
 
-    # Performance optimizations
     performance = {
       byteCompileLua = {
         enable = true;
@@ -30,64 +29,25 @@
     clipboard = {
       register = "unnamedplus";
       providers = {
-        wl-copy.enable = true; # For Wayland systems
-        xclip.enable = true; # For X11 systems
+        wl-copy.enable = true;
+        xclip.enable = true;
       };
     };
 
     extraPackages = with pkgs; [
-      # Core development tools
       nodejs
       gcc
 
-      # Lua ecosystem
-      lua-language-server # Lua LSP
+      lua-language-server
 
-      # Nix ecosystem
-      nixd # Nix LSP
+      nixd
 
-      # Python ecosystem
       python313
       python313Packages.pip
-      python313Packages.debugpy # Python debugger
-      pyright # Python LSP
+      python313Packages.debugpy
+      pyright
 
-      # TypeScript/JavaScript ecosystem
-      nodePackages.typescript-language-server # TypeScript LSP
-      nodePackages.bash-language-server # Bash/shell LSP
-
-      # FORMATTERS - Language-specific formatting tools
-
-      # Python formatters
-      ruff # Fast Python linter and formatter (Rust-based)
-      black # Opinionated Python formatter
-      python313Packages.autopep8 # Python formatter
-
-      # JavaScript/TypeScript formatters
-      nodePackages.prettier # Web formatting (JS, TS, JSON, CSS, etc.)
-      nodePackages.eslint # JavaScript/TypeScript linter with formatting
-
-      # Rust formatter
-      rustfmt # Official Rust formatter
-
-      # Go formatters
-      go # Includes gofmt
-      gotools # Includes goimports
-
-      # Lua formatter
-      stylua # Lua formatter
-
-      # Nix formatters
-      nixfmt-classic # Nix formatter
-      alejandra # Alternative Nix formatter
-
-      # JSON/YAML formatters
-      jq # JSON processor and formatter
-      yamlfmt # YAML formatter
-
-      # General purpose
-      shfmt # Shell script formatter
-      shellcheck # Shell script linter and static analysis
+      nodePackages.typescript-language-server
     ];
 
     extraFiles = {
@@ -98,9 +58,6 @@
     };
 
     extraConfigLua = ''
-      vim.opt.runtimepath:prepend(vim.fn.stdpath("config"))
-
-      -- Ensure system clipboard integration
       vim.opt.clipboard = "unnamedplus"
 
       require('config.nvchad-config')
