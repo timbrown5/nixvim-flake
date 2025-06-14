@@ -7,7 +7,7 @@
     ./snacks.nix
     ./mini.nix
     ./precognition.nix
-    # ./dashboard.nix removed - now using Snacks dashboard
+    ./conform.nix
   ];
 
   config = {
@@ -54,6 +54,40 @@
 
       # TypeScript/JavaScript ecosystem
       nodePackages.typescript-language-server # TypeScript LSP
+      nodePackages.bash-language-server # Bash/shell LSP
+
+      # FORMATTERS - Language-specific formatting tools
+
+      # Python formatters
+      ruff # Fast Python linter and formatter (Rust-based)
+      black # Opinionated Python formatter
+      python313Packages.autopep8 # Python formatter
+
+      # JavaScript/TypeScript formatters
+      nodePackages.prettier # Web formatting (JS, TS, JSON, CSS, etc.)
+      nodePackages.eslint # JavaScript/TypeScript linter with formatting
+
+      # Rust formatter
+      rustfmt # Official Rust formatter
+
+      # Go formatters
+      go # Includes gofmt
+      gotools # Includes goimports
+
+      # Lua formatter
+      stylua # Lua formatter
+
+      # Nix formatters
+      nixfmt-classic # Nix formatter
+      alejandra # Alternative Nix formatter
+
+      # JSON/YAML formatters
+      jq # JSON processor and formatter
+      yamlfmt # YAML formatter
+
+      # General purpose
+      shfmt # Shell script formatter
+      shellcheck # Shell script linter and static analysis
     ];
 
     extraFiles = {

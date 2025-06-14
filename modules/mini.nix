@@ -68,13 +68,13 @@
       };
       surround = {
         mappings = {
-          add = "ma";
-          delete = "md";
-          replace = "mr";
-          find = "mf";
-          find_left = "mF";
-          highlight = "mh";
-          update_n_lines = "mn";
+          add = "<leader>sa"; # Plugin-agnostic: surround add
+          delete = "<leader>sd"; # Plugin-agnostic: surround delete
+          replace = "<leader>sr"; # Plugin-agnostic: surround replace
+          find = "<leader>sf"; # Plugin-agnostic: surround find
+          find_left = "<leader>sF"; # Plugin-agnostic: surround find backward
+          highlight = "<leader>sh"; # Plugin-agnostic: surround highlight
+          update_n_lines = "<leader>sn"; # Plugin-agnostic: surround n-lines
         };
       };
       ai = {
@@ -117,10 +117,10 @@
           pad_comment_parts = true;
         };
         mappings = {
-          comment = "mgc";
-          comment_line = "mgcc";
-          comment_visual = "mgc";
-          textobject = "mgc";
+          comment = "gc"; # Plugin-agnostic: general comment
+          comment_line = "gcc"; # Plugin-agnostic: general comment line
+          comment_visual = "gc"; # Plugin-agnostic: general comment visual
+          textobject = "gc"; # Plugin-agnostic: general comment text object
         };
       };
     };

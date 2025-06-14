@@ -185,62 +185,76 @@ with lib;
         options.desc = "Navigate window right";
       }
 
-      # Split management
+      # WINDOW OPERATIONS - <leader>w prefix (plugin-agnostic)
       {
-        key = "<leader>sv";
+        key = "<leader>wv";
         action = "<C-w>v";
         mode = "n";
-        options.desc = "Split window vertically";
+        options.desc = "Window split vertical";
       }
       {
-        key = "<leader>sh";
+        key = "<leader>wh";
         action = "<C-w>s";
         mode = "n";
-        options.desc = "Split window horizontally";
+        options.desc = "Window split horizontal";
       }
       {
-        key = "<leader>se";
+        key = "<leader>we";
         action = "<C-w>=";
         mode = "n";
-        options.desc = "Make splits equal size";
+        options.desc = "Window equal size";
       }
       {
-        key = "<leader>sx";
+        key = "<leader>wx";
         action = "<cmd>close<CR>";
         mode = "n";
-        options.desc = "Close current split";
+        options.desc = "Window close";
       }
 
-      # Tab operations
+      # TAB OPERATIONS - <leader>t prefix with dual options
       {
         key = "<leader>to";
         action = "<cmd>tabnew<CR>";
         mode = "n";
-        options.desc = "Open new tab";
+        options.desc = "Tab open";
       }
       {
         key = "<leader>tx";
         action = "<cmd>tabclose<CR>";
         mode = "n";
-        options.desc = "Close current tab";
+        options.desc = "Tab close";
       }
+      # Semantic options (existing)
       {
         key = "<leader>tn";
         action = "<cmd>tabn<CR>";
         mode = "n";
-        options.desc = "Go to next tab";
+        options.desc = "Tab next";
       }
       {
         key = "<leader>tp";
         action = "<cmd>tabp<CR>";
         mode = "n";
-        options.desc = "Go to previous tab";
+        options.desc = "Tab previous";
+      }
+      # Mnemonic options (new alternatives)
+      {
+        key = "<leader>tj";
+        action = "<cmd>tabn<CR>";
+        mode = "n";
+        options.desc = "Tab next (alternative)";
+      }
+      {
+        key = "<leader>tk";
+        action = "<cmd>tabp<CR>";
+        mode = "n";
+        options.desc = "Tab previous (alternative)";
       }
       {
         key = "<leader>tf";
         action = "<cmd>tabnew %<CR>";
         mode = "n";
-        options.desc = "Open current buffer in new tab";
+        options.desc = "Tab from current buffer";
       }
 
       # Clipboard operations (using black hole register)
@@ -309,13 +323,7 @@ with lib;
         options.desc = "Yank line to system clipboard";
       }
 
-      # Buffer operations
-      {
-        key = "<leader>bf";
-        action = "<cmd>lua vim.lsp.buf.format()<CR>";
-        mode = "n";
-        options.desc = "Format buffer";
-      }
+      # Buffer operations (remove bf - it's in conform.nix now)
       {
         key = "<leader>bp";
         action = "ggVG\"_d\"+P";
@@ -339,6 +347,55 @@ with lib;
         action = "ggVG";
         mode = "n";
         options.desc = "Select entire buffer";
+      }
+
+      # ORDER OPERATIONS - <leader>o prefix (plugin-agnostic sorting)
+      # Alphabetical sorting
+      {
+        key = "<leader>oa";
+        action = ":'<,'>sort<CR>";
+        mode = "v";
+        options.desc = "Order alphabetical (ascending)";
+      }
+      {
+        key = "<leader>oA";
+        action = ":'<,'>sort!<CR>";
+        mode = "v";
+        options.desc = "Order alphabetical (descending)";
+      }
+      # Numerical sorting
+      {
+        key = "<leader>on";
+        action = ":'<,'>sort n<CR>";
+        mode = "v";
+        options.desc = "Order numerical (ascending)";
+      }
+      {
+        key = "<leader>oN";
+        action = ":'<,'>sort! n<CR>";
+        mode = "v";
+        options.desc = "Order numerical (descending)";
+      }
+      # Unique sorting
+      {
+        key = "<leader>ou";
+        action = ":'<,'>sort u<CR>";
+        mode = "v";
+        options.desc = "Order unique (remove duplicates)";
+      }
+      {
+        key = "<leader>oU";
+        action = ":'<,'>sort! u<CR>";
+        mode = "v";
+        options.desc = "Order unique descending";
+      }
+
+      # SURROUND LOCATE - Additional keybinding (same function as highlight)
+      {
+        key = "<leader>sl";
+        action = "lua require('mini.surround').highlight()";
+        mode = "n";
+        options.desc = "Surround locate (same as highlight)";
       }
     ];
   };
