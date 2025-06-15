@@ -14,6 +14,7 @@ This Neovim configuration combines the clean, modern UI of NvChad with the decla
 - 🖼️ **Image preview** support in Kitty terminal
 - ⚡ **Performance optimized** with tree-sitter and modern completion
 - 🎯 **Smart formatting** with Conform.nvim for 10+ languages
+- 🔧 **Health monitoring** with integrated diagnostics
 
 ## Quick Start
 
@@ -36,50 +37,45 @@ nix build
 - A [Nerd Font](https://www.nerdfonts.com/) for icons
 - Kitty terminal (for image preview)
 
-## Adding to Your Existing Flake
+## Keybinding Organization Philosophy
 
-```nix
-{
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+This configuration uses **functional namespaces** rather than plugin-specific ones. Keybindings are organized by what you want to accomplish, not which plugin provides the functionality.
 
-    nixvim-flake = {
-      url = "github:timbrown5/nixvim-flake/nvchad-base";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
+### Core Namespaces
 
-  outputs = { self, nixpkgs, nixvim-flake, ... }:
-    let
-      system = "x86_64-linux"; # Or your system
-      pkgs = nixpkgs.legacyPackages.${system};
-    in {
-      # NixOS module
-      nixosConfigurations.yourHost = nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [
-          ({ pkgs, ... }: {
-            environment.systemPackages = [
-              nixvim-flake.packages.${system}.default
-            ];
-          })
-        ];
-      };
+| Namespace | Purpose | Examples |
+|-----------|---------|----------|
+| `<leader>b*` | **Buffer operations** | Format, delete, select, paste over |
+| `<leader>c*` | **Code operations** | Format with specific tools, actions |
+| `<leader>d*` | **Diagnostics & Delete** | Navigate diagnostics, delete without yanking |
+| `<leader>f*` | **Find & Search** | Files, text, buffers, help, recent |
+| `<leader>g*` | **Git operations** | Blame, diff, stage, reset, navigate hunks |
+| `<leader>l*` | **Language Server** | LSP-specific actions, workspace management |
+| `<leader>n*` | **Notifications** | Show history, dismiss, test |
+| `<leader>s*` | **Splits & Surround** | Window splits, surround text objects |
+| `<leader>t*` | **Terminal & Tabs** | Toggle terminal, tab management |
+| `<leader>v*` | **View & Visual** | Dashboard, images, buffer switcher, health check |
+| `<leader>D*` | **Debug operations** | Breakpoints, stepping, DAP UI |
 
-      # Home Manager module
-      homeConfigurations.yourUser = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [
-          {
-            home.packages = [
-              nixvim-flake.packages.${system}.default
-            ];
-          }
-        ];
-      };
-    };
-}
-```
+### Design Principles
+
+1. **Functional over Plugin-based**: `<leader>bf` (buffer format) instead of `<leader>cf` (conform format)
+2. **Consistent Patterns**: Similar operations use similar key patterns across contexts
+3. **Dual Accessibility**: Critical operations often have both namespaced and standard keys (e.g., surround: both `sa` and `<leader>sa`)
+4. **Descriptive Multi-char**: Less frequent operations use longer, more descriptive keys (`<leader>vhc` for health check)
+5. **Mode Awareness**: Same key different modes for related operations (visual vs normal mode formatting)
+
+### Adding New Keybindings
+
+When adding new functionality:
+
+1. **Identify the primary function** (what does it accomplish?)
+2. **Choose the appropriate namespace** (buffer? code? view? etc.)
+3. **Check for conflicts** with existing bindings in that namespace
+4. **Use consistent patterns** with similar operations
+5. **Update which-key groups** to maintain discoverability
+
+Example: Adding a new code action would go in `<leader>c*`, a new view operation in `<leader>v*`.
 
 ## Key Bindings
 
@@ -174,6 +170,7 @@ For complete Neovim documentation, see `:help` or visit [Neovim Documentation](h
 | `<leader>vi` | Normal | View image preview |
 | `<leader>vc` | Normal | View clipboard image |
 | `<leader>vs` | Normal | View buffer switcher |
+| `<leader>vhc` | Normal | View health check |
 
 ### Notifications
 | Key | Mode | Description |
@@ -181,6 +178,18 @@ For complete Neovim documentation, see `:help` or visit [Neovim Documentation](h
 | `<leader>nh` | Normal | Show notification history |
 | `<leader>nd` | Normal | Dismiss notifications |
 | `<leader>nt` | Normal | Test notification |
+
+### Git Operations ([Gitsigns](https://github.com/lewis6991/gitsigns.nvim))
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>gb` | Normal | Git blame line |
+| `<leader>gd` | Normal | Git diff current file |
+| `<leader>gs` | Normal | Git stage hunk |
+| `<leader>gu` | Normal | Git unstage hunk |
+| `<leader>gr` | Normal | Git reset hunk |
+| `<leader>gp` | Normal | Git preview hunk |
+| `<leader>gn` | Normal | Git next hunk |
+| `<leader>gN` | Normal | Git previous hunk |
 
 ### LSP (Language Server Protocol)
 See [LSP documentation](https://neovim.io/doc/user/lsp.html) for more details.
@@ -258,25 +267,26 @@ See [nvim-dap documentation](https://github.com/mfussenegger/nvim-dap) for compl
 | `<leader>tt` | Normal | Toggle terminal |
 | `<Esc><Esc>` | Terminal | Exit terminal mode |
 
-### Mini.nvim Modules
+### Surround Operations (Mini.nvim)
 See [mini.nvim documentation](https://github.com/echasnovski/mini.nvim) for complete module documentation.
 
-#### Mini.surround
 | Key | Mode | Description |
 |-----|------|-------------|
-| `ma` | Normal | Add surrounding |
-| `md` | Normal | Delete surrounding |
-| `mr` | Normal | Replace surrounding |
-| `mf` | Normal | Find surrounding |
-| `mF` | Normal | Find surrounding (left) |
-| `mh` | Normal | Highlight surrounding |
-| `mn` | Normal | Update n lines |
+| `sa` / `<leader>sa` | Normal | Add surrounding |
+| `sd` / `<leader>sd` | Normal | Delete surrounding |
+| `sr` / `<leader>sr` | Normal | Replace surrounding |
+| `sf` / `<leader>sf` | Normal | Find surrounding |
+| `<leader>sF` | Normal | Find surrounding (left) |
+| `<leader>sh` | Normal | Highlight surrounding |
+| `<leader>sn` | Normal | Update n lines |
+
+### Mini.nvim Modules
 
 #### Mini.comment
 | Key | Mode | Description |
 |-----|------|-------------|
-| `mgc` | Normal/Visual | Toggle comment |
-| `mgcc` | Normal | Comment line |
+| `gc` | Normal/Visual | Toggle comment |
+| `gcc` | Normal | Comment line |
 
 #### Mini.jump
 | Key | Mode | Description |
@@ -291,6 +301,7 @@ See [mini.nvim documentation](https://github.com/echasnovski/mini.nvim) for comp
 ### Custom Commands
 | Command | Description |
 |---------|-------------|
+| `:checkhealth nixvim` | Run NixVim configuration health check |
 | `:FormatDisable` | Disable autoformat-on-save globally |
 | `:FormatDisable!` | Disable autoformat-on-save for current buffer |
 | `:FormatEnable` | Re-enable autoformat-on-save |
@@ -313,6 +324,24 @@ See [mini.nvim documentation](https://github.com/echasnovski/mini.nvim) for comp
 - **Web** - prettier (HTML, CSS, JSON, YAML, Markdown)
 - **Rust** - rustfmt (configured)
 - **Go** - goimports + gofmt (configured)
+
+### Treesitter Languages
+Syntax highlighting and parsing for: Lua, Vim, Nix, Markdown, JavaScript, TypeScript, Python, JSON, YAML, TOML, Bash, Regex, HTML, CSS, Dockerfile, Git files
+
+## Performance Features
+
+- **Startup optimization** with disabled unused providers (Perl, Ruby)
+- **Lazy provider loading** - Node.js provider loads only when working with JS/TS files
+- **Byte-compiled Lua** for faster execution
+- **Smart autocommands** to reduce unnecessary operations
+
+## Health Monitoring
+
+The configuration includes comprehensive health checking:
+
+- **Notification-based**: `<leader>vhc` - Quick popup with status
+- **Standard integration**: `:checkhealth nixvim` - Full diagnostic report
+- **Monitors**: Plugin loading, formatter availability, LSP status, debug configuration
 
 ## Customization
 
@@ -360,7 +389,7 @@ extraPackages = with pkgs; [
 
 ### Adding Keybindings
 
-Create a new file in `lua/plugins/` for your plugin:
+Follow the functional namespace philosophy:
 
 ```lua
 -- lua/plugins/my-plugin.lua
@@ -371,6 +400,7 @@ local function safe_keymap(mode, key, action, opts)
   end
 end
 
+-- Choose appropriate namespace based on function
 safe_keymap('n', '<leader>mp', '<cmd>MyPluginCommand<CR>', { desc = 'My plugin command' })
 ```
 
@@ -400,7 +430,8 @@ extraConfigLua = lib.mkAfter ''
 │   ├── config/             # General Neovim configuration
 │   │   ├── nvchad-config.lua
 │   │   ├── user-config.lua
-│   │   └── fallback.lua
+│   │   ├── fallback.lua
+│   │   └── health-check.lua
 │   └── plugins/            # Complete plugin configurations
 │       ├── snacks.lua      # Snacks keybindings
 │       ├── debugger.lua    # DAP setup and debugging keybindings
@@ -418,6 +449,7 @@ extraConfigLua = lib.mkAfter ''
 - **Buffer Management**: Snipe.nvim (visual buffer switcher)
 - **Formatting**: Conform.nvim (10+ language support)
 - **Utilities**: Mini.nvim modules, terminal, image preview, motion hints
+- **Git Integration**: Gitsigns with comprehensive git operations
 
 ## Python Debugging Guide
 
@@ -438,53 +470,4 @@ This configuration includes full debugging support for Python using the Debug Ad
 
 3. **Debug Controls**
    Once stopped at a breakpoint:
-   - `<leader>Di` - Step into functions
-   - `<leader>Dj` - Step over (next line)
-   - `<leader>Do` - Step out of current function
-   - `<leader>Dc` - Continue execution
-   - `<leader>Dr` - Restart debugging session
-   - `<leader>Dt` - Terminate debugging
-
-4. **Inspect Variables**
-   - **Visual Selection**: Select a variable name in visual mode, press `<leader>De` to evaluate
-   - **DAP UI Variables Panel**: Shows all local/global variables, expand objects to see properties
-   - **DAP Console**: Type Python expressions to evaluate in current context
-
-5. **Advanced Features**
-   - **Conditional Breakpoints**: Press `<leader>DB`, enter a condition (e.g., "x > 10")
-   - **Log Points**: Press `<leader>Dl`, enter a message to log (e.g., "Value is {x}")
-
-### Example Debug Session
-```python
-# example.py
-def calculate(x, y):
-    result = x + y  # Set breakpoint here (<leader>Db)
-    return result * 2
-
-def main():
-    numbers = [1, 2, 3, 4, 5]
-    for num in numbers:
-        value = calculate(num, 10)  # Set breakpoint here too
-        print(f"Result: {value}")
-
-if __name__ == "__main__":
-    main()
-```
-
-Debug workflow:
-1. Set breakpoints on the marked lines
-2. Press `<leader>Dc` and select "Launch file"
-3. When stopped at first breakpoint, inspect `x` and `y` variables
-4. Press `<leader>Dj` to step over the addition
-5. Use `<leader>De` to evaluate expressions like `result * 3`
-6. Press `<leader>Dc` to continue to next iteration
-
-### Visual Indicators
-- 🔴 **Breakpoint** - Red circle in sign column
-- 🟡 **Conditional Breakpoint** - Yellow circle
-- 📝 **Log Point** - Notebook icon
-- ➡️ **Current Position** - Arrow showing where execution is paused
-
-## License
-
-MIT
+   - `<leader

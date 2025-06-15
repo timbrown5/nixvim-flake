@@ -31,6 +31,16 @@
           "javascript"
           "typescript"
           "python"
+          "json"
+          "yaml"
+          "toml"
+          "bash"
+          "regex"
+          "html"
+          "css"
+          "dockerfile"
+          "gitignore"
+          "gitcommit"
         ];
       };
     };
@@ -178,6 +188,57 @@
 
     comment.enable = true;
   };
+
+  keymaps = [
+    {
+      key = "<leader>gb";
+      action = "<cmd>Gitsigns blame_line<CR>";
+      mode = "n";
+      options.desc = "Git blame line";
+    }
+    {
+      key = "<leader>gd";
+      action = "<cmd>Gitsigns diffthis<CR>";
+      mode = "n";
+      options.desc = "Git diff current file";
+    }
+    {
+      key = "<leader>gs";
+      action = "<cmd>Gitsigns stage_hunk<CR>";
+      mode = "n";
+      options.desc = "Git stage hunk";
+    }
+    {
+      key = "<leader>gu";
+      action = "<cmd>Gitsigns undo_stage_hunk<CR>";
+      mode = "n";
+      options.desc = "Git unstage hunk";
+    }
+    {
+      key = "<leader>gr";
+      action = "<cmd>Gitsigns reset_hunk<CR>";
+      mode = "n";
+      options.desc = "Git reset hunk";
+    }
+    {
+      key = "<leader>gp";
+      action = "<cmd>Gitsigns preview_hunk<CR>";
+      mode = "n";
+      options.desc = "Git preview hunk";
+    }
+    {
+      key = "<leader>gn";
+      action = "<cmd>Gitsigns next_hunk<CR>";
+      mode = "n";
+      options.desc = "Git next hunk";
+    }
+    {
+      key = "<leader>gN";
+      action = "<cmd>Gitsigns prev_hunk<CR>";
+      mode = "n";
+      options.desc = "Git previous hunk";
+    }
+  ];
 
   extraFiles = {
     "lua/plugins/which-key.lua".source = ../lua/plugins/which-key.lua;

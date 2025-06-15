@@ -54,7 +54,13 @@
       "lua/config/nvchad-config.lua".source = ../lua/config/nvchad-config.lua;
       "lua/config/user-config.lua".source = ../lua/config/user-config.lua;
       "lua/config/fallback.lua".source = ../lua/config/fallback.lua;
+      "lua/config/health-check.lua".source = ../lua/config/health-check.lua;
       "lua/plugins/snipe.lua".source = ../lua/plugins/snipe.lua;
+
+      # Health check integration for :checkhealth
+      "lua/health/nixvim.lua".text = ''
+        return require('config.health-check')
+      '';
     };
 
     extraConfigLua = ''

@@ -68,13 +68,13 @@
       };
       surround = {
         mappings = {
-          add = "<leader>sa"; # Plugin-agnostic: surround add
-          delete = "<leader>sd"; # Plugin-agnostic: surround delete
-          replace = "<leader>sr"; # Plugin-agnostic: surround replace
-          find = "<leader>sf"; # Plugin-agnostic: surround find
-          find_left = "<leader>sF"; # Plugin-agnostic: surround find backward
-          highlight = "<leader>sh"; # Plugin-agnostic: surround highlight
-          update_n_lines = "<leader>sn"; # Plugin-agnostic: surround n-lines
+          add = "<leader>sa";
+          delete = "<leader>sd";
+          replace = "<leader>sr";
+          find = "<leader>sf";
+          find_left = "<leader>sF";
+          highlight = "<leader>sh";
+          update_n_lines = "<leader>sn";
         };
       };
       ai = {
@@ -117,12 +117,46 @@
           pad_comment_parts = true;
         };
         mappings = {
-          comment = "gc"; # Plugin-agnostic: general comment
-          comment_line = "gcc"; # Plugin-agnostic: general comment line
-          comment_visual = "gc"; # Plugin-agnostic: general comment visual
-          textobject = "gc"; # Plugin-agnostic: general comment text object
+          comment = "gc";
+          comment_line = "gcc";
+          comment_visual = "gc";
+          textobject = "gc";
         };
       };
     };
   };
+
+  # Provide both namespaced surround operations and standard vim-surround keys for muscle memory
+  keymaps = [
+    {
+      key = "sa";
+      action = "<leader>sa";
+      mode = "n";
+      options.desc = "Surround add (standard key)";
+    }
+    {
+      key = "sd";
+      action = "<leader>sd";
+      mode = "n";
+      options.desc = "Surround delete (standard key)";
+    }
+    {
+      key = "sr";
+      action = "<leader>sr";
+      mode = "n";
+      options.desc = "Surround replace (standard key)";
+    }
+    {
+      key = "sf";
+      action = "<leader>sf";
+      mode = "n";
+      options.desc = "Surround find (standard key)";
+    }
+    {
+      key = "sa";
+      action = "<leader>sa";
+      mode = "v";
+      options.desc = "Surround add selection";
+    }
+  ];
 }

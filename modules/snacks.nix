@@ -50,13 +50,13 @@ in
             }
             {
               section = "terminal";
-              icon = " ";
-              title = "Git Status";
+              icon = "󰊢 ";
+              title = "󰊢 Git Status";
               enabled = "function() return Snacks.git.get_root() ~= nil end";
-              cmd = "git status --short --branch --renames";
-              height = 5;
+              cmd = "git -c color.status=always status --short --branch --renames | head -8";
+              height = 9;
               padding = 1;
-              ttl = 300;
+              ttl = 30;
               indent = 3;
             }
             { section = "startup"; }
@@ -109,7 +109,13 @@ in
           chunk.enabled = true;
         };
 
-        terminal.enabled = true;
+        terminal = {
+          enabled = true;
+          win = {
+            position = "bottom";
+            height = 0.25;
+          };
+        };
         image.enabled = true;
         explorer.enabled = true;
         picker.enabled = true;
@@ -141,7 +147,7 @@ in
       "lua/plugins/snacks-dashboard.lua".text = ''
         local M = {}
 
-        -- Mock lazy.stats before anything else
+        -- Mock lazy.stats to prevent Snacks dashboard errors when not using lazy.nvim
         package.preload['lazy.stats'] = function()
           return { stats = function() return { loaded = 0, count = 0, startuptime = 0 } end }
         end
@@ -172,7 +178,6 @@ in
             return
           end
 
-          -- Override the header section
           snacks.dashboard.sections.header = function()
             return function()
               local items = {}
@@ -184,7 +189,6 @@ in
             end
           end
 
-          -- Override the startup section
           snacks.dashboard.sections.startup = function()
             return function()
               local startup_ms = tonumber(vim.fn.reltimestr(vim.fn.reltime(vim.g.start_time))) * 1000
@@ -208,7 +212,6 @@ in
             end
           end
 
-          -- Set up the dashboard keymap
           vim.keymap.set('n', '<leader>vd', function()
             snacks.dashboard()
           end, { desc = 'View dashboard' })
@@ -224,7 +227,6 @@ in
     '';
 
     extraConfigLua = lib.mkAfter ''
-      -- Mock lazy.stats early to prevent Snacks dashboard errors
       package.preload['lazy.stats'] = function()
         return { stats = function() return { loaded = 0, count = 0, startuptime = 0 } end }
       end

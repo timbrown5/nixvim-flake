@@ -1,5 +1,10 @@
 vim.opt.colorcolumn = "80"
 
+-- Disable providers by default for faster startup, load on-demand
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_node_provider = 0
+
 vim.api.nvim_create_autocmd("ColorScheme", {
 	pattern = "*",
 	callback = function()
@@ -79,10 +84,47 @@ vim.diagnostic.config({
 	},
 })
 
-local snacks_ok, snacks = pcall(require, "snacks")
-if snacks_ok then
-	-- Snacks configuration
-end
+-- Load Node provider when working with JavaScript/TypeScript files
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = {
+		"javascript",
+		"typescript",
+		"javascriptreact",
+		"typescriptreact",
+		"vue",
+		"svelte",
+		"json",
+		"jsonc",
+	},
+	once = true,
+	callback = function()
+		if vim.g.loaded_node_provider == 0 then
+			vim.g.loaded_node_provider = nil
+			vim.cmd("runtime autoload/provider/node.vim")
+			vim.notify("Node.js provider loaded for JS/TS development", vim.log.levels.INFO)
+		end
+	end,
+	desc = "Load Node.js provider for JavaScript/TypeScript files",
+})
+
+-- Load Node provider when Node.js project files detected
+vim.api.nvim_create_autocmd("VimEnter", {
+	callback = function()
+		if
+			vim.fn.filereadable("package.json") == 1
+			or vim.fn.filereadable("yarn.lock") == 1
+			or vim.fn.filereadable("pnpm-lock.yaml") == 1
+			or vim.fn.isdirectory("node_modules") == 1
+		then
+			if vim.g.loaded_node_provider == 0 then
+				vim.g.loaded_node_provider = nil
+				vim.cmd("runtime autoload/provider/node.vim")
+				vim.notify("Node.js provider loaded (Node project detected)", vim.log.levels.INFO)
+			end
+		end
+	end,
+	desc = "Load Node.js provider when Node.js project detected",
+})
 
 local function setup_transparent_window_highlighting()
 	local ok, catppuccin = pcall(require, "catppuccin.palettes")
