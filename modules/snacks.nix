@@ -162,7 +162,7 @@ in
           "██║ ╚████║██║██╔╝ ██╗ ╚████╔╝ ██║██║ ╚═╝ ██║",
           "╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
           "",
-          "The greatest teacher, failure is. - Yoda",
+          "Simplicity is the ultimate sophistication. - Leonardo da Vinci",
           ""
         }
 
@@ -182,7 +182,7 @@ in
             return function()
               local items = {}
               for i, line in ipairs(header_lines) do
-                local hl = i <= 6 and rainbow_colors[i] or (line:match("greatest teacher") and "Special" or "SnacksDashboardHeader")
+                local hl = i <= 6 and rainbow_colors[i] or (line:match("Simplicity is the ultimate") and "Special" or "SnacksDashboardHeader")
                 table.insert(items, { text = {{ line, hl = hl }}, align = "center" })
               end
               return items
