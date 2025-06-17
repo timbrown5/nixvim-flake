@@ -46,7 +46,7 @@ with lib;
 
     keymaps = [
       {
-        key = "<leader>w";
+        key = "<leader>W";
         action = "<cmd>w<CR>";
         mode = "n";
         options.desc = "Save file";
@@ -167,29 +167,30 @@ with lib;
         options.desc = "Navigate window right";
       }
 
+      # Window management
       {
-        key = "<leader>sv";
+        key = "<leader>wv";
         action = "<C-w>v";
         mode = "n";
         options.desc = "Split window vertically";
       }
       {
-        key = "<leader>sh";
+        key = "<leader>wh";
         action = "<C-w>s";
         mode = "n";
         options.desc = "Split window horizontally";
       }
       {
-        key = "<leader>se";
+        key = "<leader>we";
         action = "<C-w>=";
         mode = "n";
-        options.desc = "Make splits equal size";
+        options.desc = "Make windows equal size";
       }
       {
-        key = "<leader>sx";
+        key = "<leader>wx";
         action = "<cmd>close<CR>";
         mode = "n";
-        options.desc = "Close current split";
+        options.desc = "Close current window";
       }
 
       {
@@ -223,59 +224,60 @@ with lib;
         options.desc = "Open current buffer in new tab";
       }
 
+      # Extended clipboard operations
       {
-        key = "<leader>d";
-        action = "\"_d";
+        key = "<leader>xd";
+        action = ''"_d'';
         mode = "n";
         options.desc = "Delete without yanking";
       }
       {
-        key = "<leader>d";
-        action = "\"_d";
+        key = "<leader>xd";
+        action = ''"_d'';
         mode = "v";
         options.desc = "Delete without yanking";
       }
       {
         key = "x";
-        action = "\"_x";
+        action = ''"_x'';
         mode = "n";
         options.desc = "Delete char without yanking";
       }
 
       {
-        key = "<leader>p";
-        action = "\"0p";
+        key = "<leader>xp";
+        action = ''"0p'';
         mode = "n";
         options.desc = "Paste from yank register";
       }
       {
         key = "<leader>P";
-        action = "\"0P";
+        action = ''"0P'';
         mode = "n";
         options.desc = "Paste from yank register before cursor";
       }
       {
-        key = "<leader>p";
-        action = "\"0p";
+        key = "<leader>xp";
+        action = ''"0p'';
         mode = "v";
         options.desc = "Paste from yank register";
       }
 
       {
-        key = "<leader>y";
-        action = "\"+y";
+        key = "<leader>xy";
+        action = ''"+y'';
         mode = "n";
         options.desc = "Yank to system clipboard";
       }
       {
-        key = "<leader>y";
-        action = "\"+y";
+        key = "<leader>xy";
+        action = ''"+y'';
         mode = "v";
         options.desc = "Yank to system clipboard";
       }
       {
         key = "<leader>Y";
-        action = "\"+Y";
+        action = ''"+Y'';
         mode = "n";
         options.desc = "Yank line to system clipboard";
       }
@@ -288,7 +290,7 @@ with lib;
       }
       {
         key = "<leader>bp";
-        action = "ggVG\"_d\"+P";
+        action = ''ggVG"_d"+P'';
         mode = "n";
         options.desc = "Paste clipboard over buffer";
       }
@@ -300,7 +302,7 @@ with lib;
       }
       {
         key = "<leader>bD";
-        action = "ggVG\"_d";
+        action = ''ggVG"_d'';
         mode = "n";
         options.desc = "Delete all of buffer without copying to clipboard";
       }

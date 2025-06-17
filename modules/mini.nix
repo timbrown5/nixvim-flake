@@ -42,8 +42,8 @@
           };
           "\"" = {
             action = "closeopen";
-            pair = "\"\"";
-            neigh_pattern = "[^\\].";
+            pair = ''""'';
+            neigh_pattern = "[^\\a].";
           };
           "'" = {
             action = "closeopen";
@@ -90,7 +90,7 @@
             pattern = "%b[]";
           };
           q = {
-            pattern = "%b\"\"";
+            pattern = ''%b""'';
           };
           "*" = {
             pattern = "%b**";

@@ -8,6 +8,8 @@
     ./mini.nix
     ./precognition.nix
     ./conform.nix
+    ./luasnip.nix
+    ./codecompanion.nix
   ];
 
   config = {

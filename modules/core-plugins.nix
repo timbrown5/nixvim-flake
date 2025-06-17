@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}:
+{ pkgs, lib, ... }:
 {
   extraPlugins = with pkgs.vimPlugins; [
     snipe-nvim
@@ -47,6 +43,26 @@
 
     blink-cmp = {
       enable = true;
+      settings = {
+        keymap = {
+          preset = "default";
+          # NOTE: snippet_forward/backward prevents Tab conflicts with LuaSnip
+          "<Tab>" = [
+            "snippet_forward"
+            "select_next"
+            "fallback"
+          ];
+          "<S-Tab>" = [
+            "snippet_backward"
+            "select_prev"
+            "fallback"
+          ];
+          "<CR>" = [
+            "accept"
+            "fallback"
+          ];
+        };
+      };
     };
 
     lsp = {
@@ -63,9 +79,7 @@
                 ];
               };
               workspace = {
-                library = [
-                  "\${third_party}/luassert/library"
-                ];
+                library = [ "\${third_party}/luassert/library" ];
               };
             };
           };

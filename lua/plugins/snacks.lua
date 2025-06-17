@@ -25,13 +25,13 @@ vim.api.nvim_create_autocmd({ "VimEnter", "ColorScheme" }, {
 safe_keymap("n", "<C-n>", function()
 	local ok, snacks = pcall(require, "snacks")
 	if ok and snacks.explorer then
-		snacks.explorer.toggle()
+		snacks.explorer()
 	else
 		vim.notify("Snacks explorer not available", vim.log.levels.WARN)
 	end
 end, { desc = "Toggle file explorer" })
 
-safe_keymap("n", "<leader>e", function()
+safe_keymap("n", "<leader>/", function()
 	local ok, snacks = pcall(require, "snacks")
 	if ok and snacks.explorer then
 		snacks.explorer()

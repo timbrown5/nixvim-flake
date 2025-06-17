@@ -123,19 +123,19 @@ which_key.setup({
 
 which_key.add({
 	-- Core functional groups
+	{ "<leader>a", group = "🤖 AI Assistant" },
 	{ "<leader>b", group = "󰓩 Buffer Operations" },
 	{ "<leader>c", group = "󰨞 Code & Formatting" },
-	{ "<leader>d", group = "󰩈 Diagnostics & Delete" },
+	{ "<leader>d", group = "󰩈 Diagnostics" },
 	{ "<leader>f", group = "󰍉 Find & Search" },
 	{ "<leader>g", group = "󰊢 Git Operations" },
 	{ "<leader>l", group = "󰿘 Language Server" },
-	{ "<leader>m", group = "󰏘 Text Manipulation" },
 	{ "<leader>n", group = "󰎟 Notifications" },
-	{ "<leader>s", group = "󰦝 Splits & Sessions" },
+	{ "<leader>s", group = "✂️ Snippets & Surround" },
 	{ "<leader>t", group = "󰙅 Terminal & Tabs" },
 	{ "<leader>v", group = "󰋩 View & Visual" },
 	{ "<leader>w", group = "󰖲 Window Management" },
-	{ "<leader>z", group = "󰘖 Fold Operations" },
+	{ "<leader>x", group = "📋 Extended Clipboard" },
 
 	-- Debugging
 	{ "<leader>D", group = "󰃤 Debug & Breakpoints" },

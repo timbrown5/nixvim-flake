@@ -1,0 +1,51 @@
+# CodeCompanion Configuration Snippets
+# Main configuration templates
+
+snippet ccconfig "Complete CodeCompanion configuration"
+	return {
+		strategies = {
+			chat = {
+				adapter = "${1:claude}",
+			},
+			inline = {
+				adapter = "${1:claude}",
+			},
+		},
+
+		adapters = {
+			${2:-- Add providers here using claude<Tab>, openai<Tab>, vllm<Tab>}
+			${0}
+		},
+
+		prompt_library = {
+			["${3:Quick Actions}"] = {
+				${4:-- Add prompts here using prompt<Tab>}
+			},
+		},
+	}
+
+snippet strategy "CodeCompanion strategy configuration"
+	strategies = {
+		chat = {
+			adapter = "${1:claude}",
+		},
+		inline = {
+			adapter = "${2:claude}",
+		},
+	},${0}
+
+snippet prompt "CodeCompanion prompt template"
+	{
+		role = "user",
+		content = "${1:Explain this code step by step}",
+		opts = {
+			placement = "${2:chat}",
+			auto_submit = ${3:true},
+		},
+	},${0}
+
+snippet promptgroup "CodeCompanion prompt group"
+	["${1:Custom Prompts}"] = {
+		${2:-- Add prompts here using prompt<Tab>}
+		${0}
+	},

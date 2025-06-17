@@ -1,0 +1,157 @@
+snippet ccconfig "Complete CodeCompanion configuration"
+	return {
+		strategies = {
+			chat = {
+				adapter = "${1:claude}",
+			},
+			inline = {
+				adapter = "${1:claude}",
+			},
+		},
+
+		adapters = {
+			${2:-- Add providers here using claude<Tab>, openai<Tab>, vllm<Tab>}
+			${0}
+		},
+
+		prompt_library = {
+			["${3:Quick Actions}"] = {
+				${4:-- Add prompts here using prompt<Tab>}
+			},
+		},
+	}
+
+snippet claude "Claude provider configuration"
+	claude = {
+		name = "claude",
+		roles = {
+			llm = "assistant",
+			user = "user",
+		},
+		features = {
+			text = true,
+			tokens = true,
+			vision = true,
+		},
+		url = "https://api.anthropic.com",
+		env = {
+			api_key = "${1:ANTHROPIC_API_KEY}",
+		},
+		headers = {
+			["content-type"] = "application/json",
+			["anthropic-version"] = "2023-06-01",
+		},
+		parameters = {
+			model = "${2:claude-4-sonnet-20250522}",
+			max_tokens = ${3:8192},
+			temperature = ${4:0.3},
+			top_p = ${5:0.95},
+		},
+	},${0}
+
+snippet openai "OpenAI provider configuration"
+	openai = {
+		name = "openai",
+		roles = {
+			llm = "assistant",
+			user = "user",
+		},
+		features = {
+			text = true,
+			tokens = true,
+			vision = true,
+		},
+		url = "https://api.openai.com/v1/chat/completions",
+		env = {
+			api_key = "${1:OPENAI_API_KEY}",
+		},
+		headers = {
+			["content-type"] = "application/json",
+		},
+		parameters = {
+			model = "${2:gpt-4o}",
+			max_tokens = ${3:4096},
+			temperature = ${4:0.3},
+			top_p = ${5:0.95},
+		},
+	},${0}
+
+snippet vllm "vLLM provider configuration"
+	${1:vllm_work} = {
+		name = "${1:vllm_work}",
+		roles = {
+			llm = "assistant",
+			user = "user",
+		},
+		features = {
+			text = true,
+			tokens = true,
+			vision = false,
+		},
+		url = "${2:http://your-vllm-endpoint.com/v1/chat/completions}",
+		env = {
+			api_key = "${3:VLLM_API_KEY}",
+		},
+		headers = {
+			["content-type"] = "application/json",
+		},
+		parameters = {
+			model = "${4:your-model-name}",
+			max_tokens = ${5:4096},
+			temperature = ${6:0.3},
+			top_p = ${7:0.95},
+		},
+	},${0}
+
+snippet customprovider "Custom provider template"
+	${1:custom_provider} = {
+		name = "${1:custom_provider}",
+		roles = {
+			llm = "assistant",
+			user = "user",
+		},
+		features = {
+			text = true,
+			tokens = ${2:true},
+			vision = ${3:false},
+		},
+		url = "${4:https://your-api-endpoint.com/v1/chat/completions}",
+		env = {
+			api_key = "${5:YOUR_API_KEY}",
+		},
+		headers = {
+			["content-type"] = "application/json",
+		},
+		parameters = {
+			model = "${6:your-model}",
+			max_tokens = ${7:4096},
+			temperature = ${8:0.3},
+			top_p = ${9:0.95},
+		},
+	},${0}
+
+snippet prompt "CodeCompanion prompt template"
+	{
+		role = "user",
+		content = "${1:Explain this code step by step}",
+		opts = {
+			placement = "${2:chat}",
+			auto_submit = ${3:true},
+		},
+	},${0}
+
+snippet promptgroup "CodeCompanion prompt group"
+	["${1:Custom Prompts}"] = {
+		${2:-- Add prompts here using prompt<Tab>}
+		${0}
+	},
+
+snippet strategy "CodeCompanion strategy configuration"
+	strategies = {
+		chat = {
+			adapter = "${1:claude}",
+		},
+		inline = {
+			adapter = "${2:claude}",
+		},
+	},${0}
