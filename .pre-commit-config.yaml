@@ -18,10 +18,10 @@ repos:
         language: system
         always-run: true
         exclude: >
-           (?x)^(
-               nix/sources.nix|
-               test_data/.*
-           )$
+          (?x)^(
+              nix/sources.nix|
+              test_data/.*
+          )$
   - repo: https://github.com/JohnnyMorganz/StyLua
     rev: v2.1.0
     hooks:
