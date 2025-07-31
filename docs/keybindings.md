@@ -212,8 +212,8 @@ See [Snippet Management Guide](snippets.md) for complete snippet usage.
 | ------------ | ------------- | ----------------------------------------------------------- |
 | `<leader>sc` | Normal/Visual | Create new snippet (prefills from selection in visual mode) |
 | `<leader>se` | Normal        | Edit existing snippets                                      |
-| `<Tab>`      | Insert/Select | Expand snippet or jump to next placeholder                  |
-| `<S-Tab>`    | Insert/Select | Jump to previous placeholder                                |
+| `<C-.>`      | Insert/Select | Expand snippet or jump to next placeholder                  |
+| `<C-,>`      | Insert/Select | Jump to previous placeholder                                |
 
 ## AI Assistant (CodeCompanion)
 

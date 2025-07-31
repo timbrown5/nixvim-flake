@@ -26,7 +26,7 @@
   keymaps = [
     # Expand or jump forward
     {
-      key = "<Tab>";
+      key = "<C-.>";
       action = "<cmd>lua require('luasnip').expand_or_jump()<CR>";
       mode = [
         "i"
@@ -40,7 +40,7 @@
 
     # Jump backward
     {
-      key = "<S-Tab>";
+      key = "<C-,>";
       action = "<cmd>lua require('luasnip').jump(-1)<CR>";
       mode = [
         "i"
