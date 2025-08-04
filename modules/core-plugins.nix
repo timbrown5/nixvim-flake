@@ -43,7 +43,22 @@
 
     blink-cmp = {
       enable = true;
+
       settings = {
+        signature = {
+          enabled = true;
+        };
+
+        documentation = {
+          auto_show = true;
+          auto_show_delay_ms = 200;
+          update_delay_ms = 100;
+        };
+
+        menu = {
+          enabled = true; # Make sure completion menu is enabled
+        };
+
         keymap = {
           preset = "default";
           # NOTE: snippet_forward/backward prevents Tab conflicts with LuaSnip
