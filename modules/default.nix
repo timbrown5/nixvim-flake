@@ -9,7 +9,6 @@
     ./precognition.nix
     ./conform.nix
     ./luasnip.nix
-    ./codecompanion.nix
   ];
 
   config = {
@@ -31,8 +30,8 @@
     clipboard = {
       register = "unnamedplus";
       providers = {
-        wl-copy.enable = true;
-        xclip.enable = true;
+        wl-copy.enable = if pkgs.stdenv.isLinux then true else false;
+        xclip.enable = if pkgs.stdenv.isLinux then true else false;
       };
     };
 
