@@ -84,7 +84,7 @@ in
 
     extraPackages = with pkgs; [
       stylua
-      nixfmt-classic
+      nixfmt
       nodePackages.prettier
       black
       python313Packages.isort

@@ -18,26 +18,6 @@
       enable = true;
       settings = {
         indent.enable = true;
-        ensure_installed = [
-          "lua"
-          "vim"
-          "vimdoc"
-          "nix"
-          "markdown"
-          "javascript"
-          "typescript"
-          "python"
-          "json"
-          "yaml"
-          "toml"
-          "bash"
-          "regex"
-          "html"
-          "css"
-          "dockerfile"
-          "gitignore"
-          "gitcommit"
-        ];
       };
     };
 
